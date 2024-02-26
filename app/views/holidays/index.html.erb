@@ -1,0 +1,49 @@
+<div class="content">
+  <div style="text-align: left; margin-top: 60px;">
+    <h1 style="flex-grow: 1;">Holidays</h1>
+    <div class="icon-link">
+      <% unless current_user.role.role_name == "Employee" %>
+    <%= link_to  new_holiday_path, class: "float-end" do %>
+      <%= image_tag("action/add.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 30px;") %>
+      <p class="icon-text">Add Holiday</p>
+      <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% if @holidays.any? %>
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>No</th>
+          <th>Client</th>
+          <th>Status</th>
+          <th>Action</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <% @holidays.each_with_index do |holiday, index| %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= holiday.name %></td>
+            <td>
+             <%= holiday.holiday_date %>
+            </td>
+
+            <td>
+              <%= link_to holiday, class: 'btn-delete' do %>
+                <%= image_tag('action/show.png', height: 30) %>
+                              <span class="tooltip-text">Show</span>
+
+              <% end %>
+
+
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<%= render 'layouts/sidebar' %>

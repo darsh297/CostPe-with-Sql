@@ -1,0 +1,58 @@
+<div class="content">
+  <div style="text-align: left; margin-top:60px">
+    <h1>Client details</h1>
+      <%= link_to edit_client_path(@client), class: 'btn-delete' do %>
+                <%= image_tag('action/edit.png', height: 30) %> 
+                <span class="tooltip-text">Edit</span>
+              <% end %>
+    
+  </div>
+
+  <div class="profile-details">
+    <p><strong>Client Name:</strong> <%= @client.client_name %></p>
+    <p><strong>Client Status:</strong> <%= @client.is_active%></p>
+      <p><strong>Created By:</strong> <%= User.find(@client.user_id).f_name %></p>
+
+
+   
+  </div>
+</div>
+</div>
+<%= render 'shared/back_button' %>
+</div>
+
+  
+  <div class="alert-container">
+  <% if notice %>
+    <p id="notice-alert" class="alert alert-success custom-alert">
+      <%= notice %>
+      <span class="remove-alert" onclick="removeAlert('notice-alert')">&times;</span>
+    </p>
+  <% end %>
+  <% if alert %>
+    <p id="alert-alert" class="alert alert-danger custom-alert">
+      <%= alert %>
+      <span class="remove-alert" onclick="removeAlert('alert-alert')">&times;</span>
+    </p>
+  <% end %>
+</div>
+
+
+<style>
+  .alert-container {
+  position: absolute;
+  top: 20;
+  right: 0;
+  width: 30%;
+  z-index: 9999; 
+}
+</style>
+<script>
+  function removeAlert(alertId) {
+    var alertElement = document.getElementById(alertId);
+    if (alertElement) {
+      alertElement.style.display = "none";
+    }
+  }
+</script>
+<%= render 'layouts/sidebar' %>

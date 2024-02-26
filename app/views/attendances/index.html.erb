@@ -1,0 +1,51 @@
+<div class="content">
+  <div style="text-align: left; margin-top: 60px;">
+    <h1 style="display: inline-block;">Attendance Report</h1>
+    <div class="legend" style="float: right;">
+      <ul class="legend-list">
+        <li style="display: inline-block; margin-right: 20px;"><span style="color: green;">&#11044;</span> Present</li>
+        <li style="display: inline-block; margin-right: 20px;"><span style="color: red;">&#11044;</span> Absent</li>
+        <li style="display: inline-block; margin-right: 20px;"><span style="color: blue;">&#11044;</span> Holiday</li>
+        <li style="display: inline-block;"><span style="color: yellow;">&#11044;</span> Half Day</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Filter by month -->
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-md-6">
+      <form action="" method="GET">
+        <select name="filter_month" class="form-control">
+          <option value="">Select Month</option>
+          <% (1..12).each do |month| %>
+            <option value="<%= month %>" <%= 'selected' if month.to_i == params[:filter_month].to_i %>><%= Date::MONTHNAMES[month] %></option>
+          <% end %>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <% @attendance_data.group_by { |attendance| attendance[:date].strftime("%W") }.each_slice(2) do |weeks| %>
+      <% weeks.each do |week, attendances| %>
+        <div class="col-md-6">
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-body">
+              <h5 class="card-title">Week <%= week.to_i + 1 %></h5>
+              <ul class="list-group">
+                <% attendances.each do |attendance| %>
+                  <li class="list-group-item">
+                    <span style="color: <%= color_for_status(attendance[:status]) %>;">&#11044;</span>
+                    <%= attendance[:date] %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+<%= render 'layouts/sidebar' %>

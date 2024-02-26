@@ -1,0 +1,52 @@
+<div class="content">
+  <div style="margin-top: 60px; display: flex;">
+    <h1 style="flex-grow: 1;">Work Report</h1>
+    <div class="icon-link">
+      <%= link_to new_workreport_path(user_id: current_user.id), class: "float-end btn-icon-container" do %>
+        <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
+        <p class="icon-text" style="margin-left: 10px;">Create WorkReport</p>
+      <% end %>
+      <% unless current_user.role.role_name == "Project Leader" || current_user.role.role_name == "Employee" %>
+        <%= link_to allworkreports_path, class: "float-end btn-icon-container" do %>
+          <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
+          <p class="icon-text" style="margin-left: 10px;">Other WorkReport</p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Date</th>
+        <th>Tasks</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @workreports.each do |workreport| %>
+        <tr>
+          <td><%= workreport.date %></td>
+          <td><%= workreport.tasks %></td>
+          <td><%= workreport.status == 'inprogress' ? 'Incomplete' : 'Complete' %></td>
+          <td>
+            <%= link_to workreport, class: 'btn-delete' do %>
+              <%= image_tag('action/show.png', height: 30) %>
+              <span class="tooltip-text">Show</span>
+            <% end %>
+            <% if Time.now.hour < 12 && workreport.date >= Date.today - 1 %>
+  <%= link_to edit_workreport_path(workreport), class: 'btn-delete' do %>
+    <%= image_tag('action/pencil.png', height: 40) %>
+    <span class="tooltip-text">Edit</span>
+  <% end %>
+<% end %>
+
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= render 'shared/error' %>
+<%= render 'shared/back_button' %>
+<%= render 'layouts/sidebar' %>

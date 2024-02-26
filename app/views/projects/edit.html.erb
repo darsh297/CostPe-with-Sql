@@ -1,0 +1,41 @@
+<div class="content">
+  <div style="text-align: left; margin-top:60px">
+    <h1>Edit Project</h1>
+  </div>
+
+  <div class="profile-details">
+    <%= form_for @project, url: project_path(@project), method: :patch do |f| %>
+      <p><strong>Project Name:</strong> <%= f.text_field :name %></p>
+      <p>
+  
+      <%= f.submit 'Update' %>
+    <% end %>
+  </div>
+
+</div>
+  
+  <div class="alert-container">
+  <% if notice %>
+    <p id="notice-alert" class="alert alert-success custom-alert">
+      <%= notice %>
+      <span class="remove-alert" onclick="removeAlert('notice-alert')">&times;</span>
+    </p>
+  <% end %>
+  <% if alert %>
+    <p id="alert-alert" class="alert alert-danger custom-alert">
+      <%= alert %>
+      <span class="remove-alert" onclick="removeAlert('alert-alert')">&times;</span>
+    </p>
+  <% end %>
+</div>
+
+<style>
+  .alert-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20%;
+    z-index: 9999; 
+  }
+</style>
+<%= render 'layouts/sidebar' %>

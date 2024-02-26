@@ -1,0 +1,195 @@
+<div class="content">
+  <div style="text-align: left;">
+    <%= form_for(@workreport, html: { class: "report-form" }) do |f| %>
+      <div class="field">
+        <h1 style="color: #365486;">New Work Report</h1>
+      </div>
+ 
+      <% if @to_emails.present? %>
+        <div class="border-box">
+          To:
+          <%= @to_emails.join(', ') %>
+        </div>
+      <% end %>
+ 
+      <br>
+ 
+      <% if @cc_emails.present? %>
+        Cc:
+        <%= @cc_emails.join(', ') %>
+      </div>
+      <% end %>
+      <br>
+ 
+      <% unless params[:user_id].present? %>
+        <div class="field">
+          <%= f.label :report_date, "Report Date:", class: "form-label" %><br />
+          <%= f.date_field :date, class: "form-control", required: true, max: Date.today %>
+        </div>
+      <% else %>
+        <% if Time.now.hour > 12 %>
+          <%= f.label :report_date, "Report Date:", class: "form-label" %><br />
+          <%= f.date_field :date, value: Date.today, class: "form-control", required: true, readonly: true, max: Date.today %>
+        <% else %>
+          <%= f.label :report_date, "Report Date:", class: "form-label" %><br />
+          <%= f.date_field :date, class: "form-control", required: true, min: Date.yesterday, max: Date.today, onchange: "checkDate(this)" %>
+        <% end %>
+      <% end %>
+ 
+      <% unless params[:user_id].present? %>
+        <div class="field">
+          <%= f.label :user_id, "User", class: "form-label" %><br />
+          <% if current_user.role.role_name == "Root" %>
+            <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+          <% else %>
+            <% corresponding_user_ids = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user.id}%", "%#{current_user.id}%").pluck(:user_id) %>
+            <% users_for_other_reports = @users.where(id: corresponding_user_ids, company_id: current_user.company_id) %>
+            <%= f.collection_select :user_id, users_for_other_reports, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+          <% end %>
+        </div>
+      <% else %>
+        <%= f.hidden_field :user_id, value: params[:user_id] %>
+      <% end %>
+ 
+      <% if current_user.role.role_name == "Root" %>
+        <div class="field">
+          <%= f.label :projects_id, "Project:", class: "form-label" %><br />
+          <%= f.collection_select :projects_id, Project.all, :id, lambda { |project| "#{project.client&.client_name || 'No Client'} - #{project.name}" }, { prompt: "Select a Project" }, { class: "form-control select-with-arrow", required: true } %>
+        </div>
+      <% else %>
+        <div class="field">
+          <%= f.label :projects_id, "Project:", class: "form-label" %><br />
+          <%= f.collection_select :projects_id, Project.joins(:client).where(clients: { company_id: current_user.company_id }), :id, lambda { |project| "#{project.client&.client_name || 'No Client'} - #{project.name}" }, { prompt: "Select a Project" }, { class: "form-control select-with-arrow", required: true } %>
+        </div>
+      <% end %>
+ 
+      <div class="field">
+        <%= f.label :tasks, "Tasks:", class: "form-label" %><br />
+        <%= f.text_area :tasks, placeholder: "Task", class: "form-control" %>
+      </div>
+ 
+      <div class="field">
+        <div class="row">
+          <div class="col">
+            <%= f.label :hour, "Hour:", class: "form-label" %><br />
+            <%= f.select :hours, (0..18).to_a, { selected: 0 }, { class: "form-control", required: true } %>
+          </div>
+          <div class="col">
+            <%= f.label :minute, "Minute:", class: "form-label" %><br />
+            <%= f.select :minutes, options_for_select([0,10, 20, 30, 40, 50], selected: 0), {}, { class: "form-control", required: true } %>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="field">
+        <%= f.label :status, "Status:", class: "form-label" %><br />
+        <%= f.select :status, options_for_select(['inprogress', 'complete'], selected: "complete"), { prompt: "Select Status" }, { class: "form-control", required: true } %>
+      </div>
+      <br>
+     <div class="field d-flex justify-content-between">
+  <%= f.submit "Add More", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;", id: "addMoreBtn" %>
+  <%= f.submit "Create Work Report", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
+</div>
+
+
+    <% end %>
+ </div> 
+   </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const addMoreBtn = document.getElementById("addMoreBtn");
+  addMoreBtn.addEventListener("click", function(event) {
+    event.preventDefault();
+    const form = document.querySelector('.report-form');
+    const newForm = form.cloneNode(true);
+    
+    // Remove the heading from the new form if it exists
+    const heading = newForm.querySelector('h1');
+    if (heading) {
+      heading.remove();
+    }
+    
+    // Remove date field from the new form if it exists
+    const dateField = newForm.querySelector('[name="workreport[date]"]');
+    if (dateField) {
+      const dateFieldContainer = dateField.closest('.field');
+      if (dateFieldContainer) {
+        dateFieldContainer.remove();
+      } else {
+        dateField.remove(); // Remove the date field directly if its container is not found
+      }
+      
+      // Remove the associated label for the date field
+      const dateLabel = newForm.querySelector('label[for="' + dateField.id + '"]');
+      if (dateLabel) {
+        dateLabel.remove();
+      }
+    }
+
+    // Remove select user field from the new form if it exists
+    const userField = newForm.querySelector('[name="workreport[user_id]"]');
+    if (userField) {
+      const userFieldContainer = userField.closest('.field');
+      if (userFieldContainer) {
+        userFieldContainer.remove();
+      } else {
+        userField.remove(); // Remove the user field directly if its container is not found
+      }
+      
+      // Remove the associated label for the user field
+      const userLabel = newForm.querySelector('label[for="' + userField.id + '"]');
+      if (userLabel) {
+        userLabel.remove();
+      }
+    }
+    
+    // Set the same date in the cloned form
+    const originalDateField = form.querySelector('[name="workreport[date]"]');
+    if (originalDateField) {
+      const newDateField = newForm.querySelector('[name="workreport[date]"]');
+      if (newDateField) {
+        newDateField.value = originalDateField.value;
+      }
+    }
+    
+    // Set the same user ID in the cloned form
+    const originalUserIdField = form.querySelector('[name="workreport[user_id]"]');
+    if (originalUserIdField) {
+      const newUserIdField = newForm.querySelector('[name="workreport[user_id]"]');
+      if (newUserIdField) {
+        newUserIdField.value = originalUserIdField.value;
+      }
+    }
+    
+    // Remove "Add More" and "Create Work Report" buttons from the new form
+    const addMoreButton = newForm.querySelector('#addMoreBtn');
+    if (addMoreButton) {
+      addMoreButton.remove();
+    }
+    const createReportButton = newForm.querySelector('[type="submit"]');
+    if (createReportButton) {
+      createReportButton.remove();
+    }
+    
+    // Create and add a cancel button to the new form
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.classList.add('btn', 'btn-secondary');
+    cancelButton.style.backgroundColor = '#707070'; // Set the background color of the button
+    cancelButton.style.border = 'none'; // Remove border
+    cancelButton.onclick = function() {
+      newForm.remove();
+    };
+    newForm.appendChild(cancelButton);
+    
+    // Ensure the action attribute is retained
+    newForm.action = form.action;
+    form.parentNode.insertBefore(newForm, form.nextSibling);
+  });
+});
+</script>
+
+<%= render 'shared/error' %>
+<%= render 'shared/back_button' %>
+<%= render 'layouts/sidebar' %>

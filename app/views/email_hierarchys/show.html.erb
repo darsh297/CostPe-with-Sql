@@ -1,0 +1,50 @@
+<div class="content">
+  <div style="text-align: left; margin-top:60px">
+    <h1>Email Hierarchy</h1>
+      <%= link_to edit_email_hierarchy_path(@email_hierarchy), class: 'btn-delete' do %>
+                <%= image_tag('action/edit.png', height: 30) %>
+                <span class="tooltip-text">Edit</span>
+              <% end %>
+
+  </div>
+
+  <div class="profile-details">
+    <p><strong>User:</strong></p><ul><li> <%= User.find(@email_hierarchy.user_id).email %></li></ul>
+    <p><strong>To:</strong></p>
+    <ul>
+      <% @email_hierarchy.to_ids.split(',').each_with_index do |user_id, index| %>
+        <% user = User.find(user_id) %>
+        <li><%= "#{index + 1}. #{user.email}" %></li>
+      <% end %>
+    </ul>
+
+    <p><strong>Cc:</strong></p>
+    <ul>
+      <% @email_hierarchy.cc_ids.split(',').each_with_index do |user_id, index| %>
+        <% begin %>
+          <% user = User.find(user_id) %>
+          <li><%= "#{index + 1}. #{user.email}" %></li>
+        <% rescue ActiveRecord::RecordNotFound %>
+          <li>User with ID <%= user_id %> not found</li>
+        <% end %>
+      <% end %>
+    </ul>
+
+
+
+
+  </div>
+</div>
+</div>
+</div>
+<div class="icon-link">
+
+<div style="position: absolute; top: 10px; right: 60px;">
+  <%= link_to email_hierarchys_path(user_id: current_user.id), class: "btn-icon-container" do %>
+    <%= image_tag("back.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
+    <p class="icon-text" style="margin-left: 10px;">Back</p>
+  <% end %>
+</div>
+</div>
+<%= render 'shared/error' %>
+<%= render 'layouts/sidebar' %>

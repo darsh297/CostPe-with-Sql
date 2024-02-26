@@ -1,0 +1,93 @@
+<div class="content">
+  <div style="text-align: left; margin-top:80px;">
+    <h1>All Users</h1>
+
+    <% if current_user.role.role_name == "Root" %> <!-- Only visible to root admin -->
+      <table class="table table-bordered table-striped">
+        <!-- Your table content -->
+      </table>
+
+      <div style="margin-top: 20px;"> <!-- Adjust margin-top as needed -->
+        <%= form_tag(users_path, method: :get, class: "form-inline", id: "company_filter_form") do %>
+          <%= select_tag(:company_id, options_for_select([['All Users', ''], *Company.pluck(:company_name, :id)], params[:company_id]), class: "form-control mr-2", id: "company_select", style: "width: 200px;") %>
+
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="icon-links" style="display: flex; justify-content: space-between; margin-top: 20px;">
+      <div class="icon-link">
+        <%= link_to new_user_path, class: "float-end" do %>
+          <%= image_tag("action/user.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 28px;") %>
+          <p class="icon-text">New User</p>
+        <% end %>
+      </div>
+
+     
+
+      <div class="icon-link">
+        <%= link_to email_hierarchys_path, class: "float-end" do %>
+          <%= image_tag("action/email.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 30px;") %>
+          <p class="icon-text">Email Hierarchy</p>
+        <% end %>
+      </div>
+
+
+    </div>
+  </div>
+
+  <% if @filtered_users.any? %>
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>No</th>
+          <th>Email</th>
+          <th>Company</th>
+          <th>Role</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @filtered_users.each_with_index do |user, index| %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= user.email %></td>
+            <td><%= user.company&.company_name || ' ' %></td>
+            <td><%= user.role&.role_name %></td>
+            <td>
+              <%= link_to user, class: 'btn-delete' do %>
+                <%= image_tag('action/show.png', height: 30) %>
+                <span class="tooltip-text">Show</span>
+              <% end %>
+
+              <% if user.id != 1 %>
+                <%= link_to soft_delete_user_path(user), method: :delete, data: { turbo_method: :delete, confirm: 'Are you sure? This action cannot be undone.' }, class: 'btn-delete' do %>
+                  <%= image_tag('action/delete.png', height: 30) %>
+                  <span class="tooltip-text">Delete</span>
+                <% end %>
+              <% else %>
+                <div style="width: 10px; height: 10px;"></div> <!-- Adjust width and height as needed -->
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No users found.</p>
+  <% end %>
+</div>
+
+<%= render 'shared/error' %>
+
+<%= render 'layouts/sidebar' %>
+
+<script>
+  // Automatically submit the form when a company is selected
+  document.addEventListener('DOMContentLoaded', function() {
+    const companySelect = document.getElementById('company_select');
+    companySelect.addEventListener('change', function() {
+      document.getElementById('company_filter_form').submit();
+    });
+  });
+</script>

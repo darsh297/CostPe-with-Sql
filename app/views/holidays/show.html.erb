@@ -1,0 +1,31 @@
+<div class="content">
+  <div style="text-align: left; margin-top:60px">
+    <h1>Holiday details</h1>
+      <% unless current_user.role.role_name == "Employee"%>
+      <%= link_to edit_holiday_path(@holiday), class: 'btn-delete' do %>
+                <%= image_tag('action/edit.png', height: 30) %>
+                <span class="tooltip-text">Edit</span>
+              <% end %>
+
+              <%end%>
+
+  </div>
+
+  <div class="profile-details">
+    <p><strong>Holiday Name:</strong> <%= @holiday.name %></p>
+    <p><strong>Holiday Date:</strong> <%= @holiday.holiday_date%></p>
+
+  </div>
+</div>
+</div>
+</div>
+      <div class="icon-link">
+
+<div style="position: absolute; top: 10px; right: 30px;">
+  <%= link_to holidays_path(user_id: current_user.id), class: "btn-icon-container" do %>
+    <%= image_tag("back.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
+    <p class="icon-text" style="margin-left: 10px;">Back</p>
+  <% end %>
+</div>
+</div>
+<%= render 'layouts/sidebar' %>

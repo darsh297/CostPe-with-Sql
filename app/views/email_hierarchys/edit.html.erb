@@ -1,0 +1,36 @@
+<div class="content">
+  <div style="text-align: left; margin-top: 60px;">
+    <h1>Edit EmailHierarchy</h1>
+  </div>
+
+  <div class="profile-details">
+    <% existing_to_ids = @email_hierarchy.to_ids.split(',') %>
+    <% existing_cc_ids = @email_hierarchy.cc_ids.split(',') %>
+
+    <%= form_for(@email_hierarchy) do |f| %>
+      <p><strong>User:</strong></p>
+      <ul>
+        <li><%= @email_hierarchy.user.email %></li>
+      </ul>
+
+      <%= f.label :to, "To", class: "form-label" %> <br />
+      <select name="email_hierarchy[to_ids][]" id="to_ids" class="form-control" multiple="multiple">
+        <% @users.each do |user| %>
+          <option value="<%= user.id %>" <%= 'selected="selected"' if existing_to_ids.include?(user.id.to_s) %>><%= user.email %></option>
+        <% end %>
+      </select>
+      <br /> <br />
+
+      <%= f.label :cc, "Cc", class: "form-label" %> <br />
+      <select name="email_hierarchy[cc_ids][]" id="cc_ids" class="form-control" multiple="multiple">
+        <% @users.each do |user| %>
+          <option value="<%= user.id %>" <%= 'selected="selected"' if existing_cc_ids.include?(user.id.to_s) %>><%= user.email %></option>
+        <% end %>
+      </select>
+      <br />
+      <%= f.submit 'Update' %>
+    <% end %>
+  </div>
+</div>
+<%= render 'shared/error' %>
+<%= render 'layouts/sidebar' %>

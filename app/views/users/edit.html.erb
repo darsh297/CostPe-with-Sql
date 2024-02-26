@@ -1,0 +1,43 @@
+<div class="content">
+  <div style="text-align: left; margin-top: 60px;">
+    <%= form_for(@user, html: { class: "report-form" }, url: user_path(@user)) do |f| %>
+       
+      <div class="field">
+        <h1 style="color: #365486;">Edit Profile</h1>
+      </div>
+      <div class="field">
+        <%= f.label "Profile Photo", class: "form-label" %><br />
+        <%= f.file_field :avatar , class: "form-control" %>
+      </div>
+      <div class="field">
+        <%= f.label "First Name", class: "form-label" %><br />
+        <%= f.text_field :f_name, class: "form-control" %>
+      </div>
+      <div class="field">
+        <%= f.label "Last Name", class: "form-label" %><br />
+        <%= f.text_field :l_name, class: "form-control" %>
+      </div>
+      <div class="field">
+        <%= f.label "Account Number", class: "form-label" %><br />
+        <%= f.text_field :accountnumber, class: "form-control" %>
+      </div>
+      <div class="field">
+        <%= f.label "IFSC", class: "form-label" %><br />
+        <%= f.text_field :ifsc, class: "form-control" %>
+      </div>
+      <div class="field">
+        <%= f.label "Mobile Number", class: "form-label" %><br />
+        <%= f.text_field :mobileNumber, class: "form-control" %>
+      </div>
+      <div class="field">
+        <%= f.label "Joining Date", class: "form-label" %><br />
+        <%= f.date_field :joiningDate, class: "form-control", max: Date.today %>
+      </div>
+      <div class="field">
+        <%= f.submit 'Update', class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<%= render 'shared/error' %>
+<%= render 'layouts/sidebar' %>

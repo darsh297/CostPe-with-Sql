@@ -1,0 +1,48 @@
+<div class="content">
+  <div style="text-align: left; margin-top: 60px;">
+
+    <%= form_for(@holiday,html: { class: "report-form" }, url: holidays_path) do |f| %>
+     
+      <div class="field">
+        <h1 style="color: #365486;">New Holiday</h1>
+        <%= f.label :holiday_name, "Holiday Name", class: "form-label" %><br>
+        <%= f.text_field :name, class: "form-control", placeholder: "Enter holiday name" %><br>
+
+        <%= f.label :Date, class: "form-label" %><br>
+        <%= f.date_field :holiday_date, class: "form-control", min: Date.today, placeholder: "Select holiday date" %><br>
+
+           <% if @holiday.errors[:holiday_date].any? %>
+         
+            <b><%= "Holiday Date" + @holiday.errors[:holiday_date].join(", ") %></b>
+          <% end %>
+
+
+
+        <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
+            <%= f.collection_select :company_id, Company.all, :id, :company_name,{}, class: "form-control", placeholder: "Enter holiday name" %><br>
+            <% if @holiday.errors[:company_id].any? %>
+              <div class="error-message"><%= @user.errors[:company_id].first %></div>
+            <% end %>
+          </div>
+
+
+
+      <div class="field">
+      <%= f.submit "Add", class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
+  <% end %>
+    </div>
+      </div>
+
+
+</div>
+      <div class="icon-link">
+
+<div style="position: absolute; top: 10px; right: 30px;">
+  <%= link_to holidays_path(user_id: current_user.id), class: "btn-icon-container" do %>
+    <%= image_tag("back.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
+    <p class="icon-text" style="margin-left: 10px;">Back</p>
+  <% end %>
+</div>
+</div>
+
+<%= render 'layouts/sidebar' %>

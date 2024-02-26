@@ -1,0 +1,79 @@
+<div class="sidebar">
+<div class="sidebar cinematic-text">
+ <div>
+  <div>
+  <a href="<%= homes_path %>">
+    <%= image_tag("Bluebglogo.png", class: "image-logo") %>
+  </a>
+</div>
+
+
+      <br/>
+     <%= link_to homes_path do %>
+        <%= image_tag("login/dashboard.png", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Dashboard
+      <% end %>
+       <br/>
+        <%= link_to  workreports_path do %>
+        <%= image_tag("login/report.png", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        WorkReport
+      <% end %>
+      <br/>
+
+      <%= link_to holidays_path do %>
+        <%= image_tag("login/vacation.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Holiday
+      <% end %>
+      <br/>
+
+       <%= link_to attendances_path do %>
+        <%= image_tag("login/attendance.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Attendance
+      <% end %>
+      <br/>
+
+
+      <%= link_to check_ins_path do %>
+        <%= image_tag("login/check.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        CheckIn
+      <% end %>
+      <br/>
+
+
+
+      <%= link_to user_path(current_user) do %>
+        <%= image_tag("login/user.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Profile
+      <% end %>
+      <br/>
+
+   <%= link_to clients_path do %>
+        <%= image_tag("action/target.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Client
+      <% end %>
+      <br/>
+       <%= link_to projects_path do %>
+        <%= image_tag("action/projec.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Project
+      <% end %>
+      <br/>
+
+
+  <% if can? :create, User %>
+        <%= link_to users_path do %>
+          <%= image_tag("login/management.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+          Admin Panel
+        <% end %>
+        <br/>
+      <% end %>
+
+ </div>
+
+ <div style="margin-top: auto; margin-bottom: 10px;">
+      <%= link_to destroy_user_session_path, method: :delete, data: { turbo_method: :delete } do %>
+        <%= image_tag("login/power-off.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Logout
+      <% end %>
+
+
+</div>
