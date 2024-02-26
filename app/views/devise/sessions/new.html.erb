@@ -24,41 +24,6 @@
         <%= f.submit "Log in" , class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
       </div>
     <% end %>
+    <% link_to user_password_path %>
   </div>
-  
-  <div class="alert-container">
-  <% if notice %>
-    <p id="notice-alert" class="alert alert-success custom-alert">
-      <%= notice %>
-      <span class="remove-alert" onclick="removeAlert('notice-alert')">&times;</span>
-    </p>
-  <% end %>
-  <% if alert %>
-    <p id="alert-alert" class="alert alert-danger custom-alert">
-      <%= alert %>
-      <span class="remove-alert" onclick="removeAlert('alert-alert')">&times;</span>
-    </p>
-  <% end %>
-</div>
-
-
-<style>
-  .alert-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 30%;
-  z-index: 9999; 
-}
-</style>
-
-
-<script>
-  function removeAlert(alertId) {
-    var alertElement = document.getElementById(alertId);
-    if (alertElement) {
-      alertElement.style.display = "none";
-    }
-  }
-</script>
-</style>
+  <%= render 'shared/error' %>

@@ -1,25 +1,24 @@
-
-  
-  <div class="alert-container">
+<div class="alert-container" style="text-align: right;">
   <% if notice %>
-    <p id="notice-alert" class="alert alert-success custom-alert">
+    <p id="notice-alert" class="alert alert-success custom-alert" style="background-color: transparent; color: #36AD00; border: 1px solid #36AD00; display: inline-block; max-width: 300px; width: auto;">
       <%= notice %>
       <span class="remove-alert" onclick="removeAlert('notice-alert')">&times;</span>
     </p>
   <% end %>
   <% if alert %>
-    <p id="alert-alert" class="alert alert-danger custom-alert">
+    <p id="alert-alert" class="alert alert-danger custom-alert" style="background-color: transparent; color: #FF0F0F; border: 1px solid #FF0F0F; display: inline-block; max-width: 300px; width: auto;">
       <%= alert %>
       <span class="remove-alert" onclick="removeAlert('alert-alert')">&times;</span>
     </p>
   <% end %>
 </div>
 
+
 <script>
   function removeAlert(alertId) {
     var alertElement = document.getElementById(alertId);
     if (alertElement) {
-      alertElement.style.display = "none";
+      alertElement.remove();
     }
   }
 </script>

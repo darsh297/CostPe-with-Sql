@@ -51,6 +51,7 @@ end
 end
 
 def create
+
   @workreport = Workreport.new(workreport_params)
   @workreport.created_by = current_user.id
 

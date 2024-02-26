@@ -4,7 +4,7 @@ class EmailHierarchysController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy]
 
   def index
-    if current_user.role.role_name == "Root"
+    if current_user.role_id == 1
     @email_hierarchys = EmailHierarchy.all
 
     else
@@ -17,11 +17,11 @@ class EmailHierarchysController < ApplicationController
     @email_hierarchy = EmailHierarchy.find(params[:id])
   end
 
-  def new
-    users_with_hierarchy = EmailHierarchy.pluck(:user_id).uniq
-    @users = User.where(company_id: current_user.company_id).where.not(id: users_with_hierarchy)
-    @email_hierarchy = EmailHierarchy.new
-  end
+def new
+  @users = User.where(company_id: current_user.company_id)
+  @email_hierarchy = EmailHierarchy.new
+end
+
 
   def edit
 

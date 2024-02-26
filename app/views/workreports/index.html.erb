@@ -1,12 +1,14 @@
 <div class="content">
   <div style="margin-top: 60px; display: flex;">
     <h1 style="flex-grow: 1;">Work Report</h1>
-    <div class="icon-link">
-      <%= link_to new_workreport_path(user_id: current_user.id), class: "float-end btn-icon-container" do %>
-        <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
-        <p class="icon-text" style="margin-left: 10px;">Create WorkReport</p>
-      <% end %>
-      <% unless current_user.role.role_name == "Project Leader" || current_user.role.role_name == "Employee" %>
+  <div class="icon-link">
+<% unless current_user.workreports.exists?(date: Date.today) %>
+  <%= link_to new_workreport_path(user_id: current_user.id), class: "float-end btn-icon-container" do %>
+    <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
+    <p class="icon-text" style="margin-left: 10px;">Create WorkReport</p>
+  <% end %>
+<% end %>
+ <% unless current_user.role.role_name == "Project Leader" || current_user.role.role_name == "Employee" %>
         <%= link_to allworkreports_path, class: "float-end btn-icon-container" do %>
           <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
           <p class="icon-text" style="margin-left: 10px;">Other WorkReport</p>

@@ -24,8 +24,9 @@ class UsersController < ApplicationController
       end
 
       def create
+        # binding.pry
         @user = User.new(user_params)
-        binding.pry
+        # binding.pry
         # If the role is 2, set designation_id and department_id to nil
         if @user.role.role_name == "Company Admin"
           @user.designation_id = nil
@@ -34,6 +35,8 @@ class UsersController < ApplicationController
 
         if @user.save
           flash[:notice] = "#{@user.email} created successfully."
+
+        UserMailer.new_user_email(@user).deliver_now
           redirect_to users_path
         else
           flash[:notice] = "User cannot be created."
@@ -70,7 +73,7 @@ def soft_delete
 
   unless @user.role.role_name == "Root"
     @user.soft_delete
-    redirect_to users_path, notice: 'User was successfully soft deleted.'
+    redirect_to users_path, notice: 'User was successfully deleted.'
   else
     redirect_to users_path, alert: 'Cannot delete user with role ID 1.'
   end

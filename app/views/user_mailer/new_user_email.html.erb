@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* Add your custom styles here */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #365486;
+    }
+    p {
+      margin-bottom: 10px;
+    }
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #365486;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome aboard!</h1>
+    <p>Thank you for joining us.</p>
+    <p>Email: <%= @user.email %></p>
+    <p>Password: <%= @user.password %></p>
+   
+  </div>
+</body>
+</html>

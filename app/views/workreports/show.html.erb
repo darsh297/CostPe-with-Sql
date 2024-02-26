@@ -16,32 +16,6 @@
 </div>
 
 </div>
-  
-  <div class="alert-container">
-  <% if notice %>
-    <p id="notice-alert" class="alert alert-success custom-alert">
-      <%= notice %>
-      <span class="remove-alert" onclick="removeAlert('notice-alert')">&times;</span>
-    </p>
-  <% end %>
-  <% if alert %>
-    <p id="alert-alert" class="alert alert-danger custom-alert">
-      <%= alert %>
-      <span class="remove-alert" onclick="removeAlert('alert-alert')">&times;</span>
-    </p>
-  <% end %>
-</div>
-
-
-<style>
-  .alert-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 20%;
-  z-index: 9999; 
-}
-</style>
 <%= render 'shared/error' %>
 <%= render 'shared/back_button' %>
 <%= render 'layouts/sidebar' %>
