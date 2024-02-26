@@ -1,4 +1,5 @@
 class AttendancesController < ApplicationController
+    before_action :authenticate_user!
   def index
     @workreports = current_user.workreports
     @date = params[:date] ? Date.parse(params[:date]) : Date.today

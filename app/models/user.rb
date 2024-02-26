@@ -16,6 +16,7 @@ class User < ApplicationRecord
 
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, format: { with: /\A(?=.*[a-zA-Z])(?=.*[0-9]).{8,}\z/, alert: "must contain at least one letter, one digit, and be at least 8 characters long" }, on: :create
+  
   validate :password_no_spaces
   validates :mobileNumber, presence: true, format: { with: /\A\d{10}\z/, alert: "must be a 10-digit number" } , on: :update
   validates :ifsc, presence: true, format: { with: /\A[A-Z]{4}0\d{5}\z/, message: "must be in the format ABCD0 followed by 5 digits" }, on: :update

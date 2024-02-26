@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   load_and_authorize_resource
-      def index
+  before_action :authenticate_user!
+  def index
         if current_user.role_id.in?([2, 3, 4, 5])
           @filtered_users = User.where(company_id: current_user.company_id, isactive: true, role_id: [2, 3, 4, 5,6])
         else
@@ -89,6 +90,6 @@ end
       if action_name == 'create'
         params.require(:user).permit(:profile_picture, :email, :password, :role_id, :company_id, :department_id, :designation_id)
       elsif action_name == 'update'
-        params.require(:user).permit(:avatar, :f_name, :l_name, :accountnumber, :ifsc, :mobileNumber, :joiningDate)
+       params.require(:user).permit(:avatar, :f_name, :l_name, :accountnumber, :ifsc, :mobileNumber, :joiningDate).permit!
       end
     end

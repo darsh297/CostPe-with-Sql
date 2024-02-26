@@ -1,4 +1,5 @@
 class ClientsController < ApplicationController
+    before_action :authenticate_user!
 def index
  if current_user.role.role_name == "Company Admin"
   @clients = Client.where(company_id: current_user.company_id)

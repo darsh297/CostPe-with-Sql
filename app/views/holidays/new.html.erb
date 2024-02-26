@@ -17,15 +17,17 @@
           <% end %>
 
 
+<% unless current_user.role.role_name == 'Company Admin' %>
+  <div class="form-group">
+    <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
+    <%= f.collection_select :company_id, Company.all, :id, :company_name, {}, class: "form-control", placeholder: "Enter holiday name" %><br>
+    <% if @holiday.errors[:company_id].any? %>
+      <div class="error-message"><%= @user.errors[:company_id].first %></div>
+    <% end %>
+  </div>
+<% end %>
 
-        <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
-            <%= f.collection_select :company_id, Company.all, :id, :company_name,{}, class: "form-control", placeholder: "Enter holiday name" %><br>
-            <% if @holiday.errors[:company_id].any? %>
-              <div class="error-message"><%= @user.errors[:company_id].first %></div>
-            <% end %>
-          </div>
-
-
+</div>
 
       <div class="field">
       <%= f.submit "Add", class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
@@ -44,5 +46,5 @@
   <% end %>
 </div>
 </div>
-
+<%= render 'shared/error' %>
 <%= render 'layouts/sidebar' %>

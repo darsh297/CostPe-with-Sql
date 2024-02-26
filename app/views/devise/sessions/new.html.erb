@@ -24,6 +24,6 @@
         <%= f.submit "Log in" , class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
       </div>
     <% end %>
-    <% link_to user_password_path %>
+    <%= render "devise/shared/links" %>
   </div>
   <%= render 'shared/error' %>

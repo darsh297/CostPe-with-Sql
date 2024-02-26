@@ -1,4 +1,5 @@
 class WorkreportsController < ApplicationController
+  before_action :authenticate_user!
   load_and_authorize_resource
  def index
   @workreports = current_user.workreports.order(date: :desc)
