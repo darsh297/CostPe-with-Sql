@@ -3,21 +3,20 @@
     <div class="header-container">
       <h2>CheckIn/CheckOut</h2>
       <% if @check_in %>
-     <div class="button-container" style="display: flex; justify-content: space-between;">
-  <div class="field">
-    <%= form_with(model: @check_in, url: check_ins_path, method: :post) do |form| %>
-      <%= form.submit "Check In", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
-    <% end %>
-  </div>
-  <div class="field">
-    <%= form_with(model: @check_in, url: checkout_check_ins_path, method: :post) do |form| %>
-      <%= form.submit "Check Out", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
-    <% end %>
-  </div>
-</div>
-
+        <div class="button-container" style="display: flex; justify-content: flex-end;">
+          <div class="field">
+            <%= form_with(model: @check_in, url: check_ins_path, method: :post) do |form| %>
+              <%= form.submit "Check In", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
+            <% end %>
+          </div>
+          <div class="field">
+            <%= form_with(model: @check_in, url: checkout_check_ins_path, method: :post) do |form| %>
+              <%= form.submit "Check Out", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
+            <% end %>
+          </div>
+        </div>
       <% else %>
-      <p>No check-in records found.</p>
+        <p>No check-in records found.</p>
       <% end %>
     </div>
     <table class="table table-bordered table-striped">
@@ -31,11 +30,11 @@
       </thead>
       <tbody>
         <% @check_ins.each do |check_in| %>
-        <tr>
-          <td><%= check_in.check_in_time.strftime("%d-%m-%Y") %></td>
-          <td><%= check_in.check_in_time.strftime("%I:%M:%S %p") %></td>
-          <td><%= check_in.check_out_time ? check_in.check_out_time.strftime("%I:%M:%S %p") : "Not checked out" %></td>
-        </tr>
+          <tr>
+            <td><%= check_in.check_in_time.strftime("%d-%m-%Y") %></td>
+            <td><%= check_in.check_in_time.strftime("%I:%M:%S %p") %></td>
+            <td><%= check_in.check_out_time ? check_in.check_out_time.strftime("%I:%M:%S %p") : "Not checked out" %></td>
+          </tr>
         <% end %>
       </tbody>
     </table>
@@ -44,5 +43,3 @@
 
 <%= render 'shared/error' %>
 <%= render 'layouts/sidebar' %>
-
-

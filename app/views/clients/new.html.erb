@@ -9,9 +9,11 @@
         <%= f.label :name, class: "form-label" %><span class="required">*</span><br />
         <%= f.text_field :client_name, class: "form-control",placeholder: "Client Name ", required: true %>
       
-     
-       <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
-       <%= f.collection_select :company_id, Company.all, :id, :company_name, { prompt: "Select a company" }, class: "form-control", required: true %><br>
+   <% unless current_user.role.role_name == 'Company Admin' %>
+  <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
+  <%= f.collection_select :company_id, Company.all, :id, :company_name, { prompt: "Select a company" }, class: "form-control", required: true %><br>
+<% end %>
+
 
       <div class="field">
         <%= f.submit "Add", class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
@@ -21,38 +23,5 @@
 </div>
 </div>
 
-  
-  <div class="alert-container">
-  <% if notice %>
-    <p id="notice-alert" class="alert alert-success custom-alert">
-      <%= notice %>
-      <span class="remove-alert" onclick="removeAlert('notice-alert')">&times;</span>
-    </p>
-  <% end %>
-  <% if alert %>
-    <p id="alert-alert" class="alert alert-danger custom-alert">
-      <%= alert %>
-      <span class="remove-alert" onclick="removeAlert('alert-alert')">&times;</span>
-    </p>
-  <% end %>
-</div>
-
-
-<style>
-  .alert-container {
-  position: absolute;
-  top: 20;
-  right: 0;
-  width: 30%;
-  z-index: 9999; 
-}
-</style>
-<script>
-  function removeAlert(alertId) {
-    var alertElement = document.getElementById(alertId);
-    if (alertElement) {
-      alertElement.style.display = "none";
-    }
-  }
-</script>
 <%= render 'layouts/sidebar' %>
+

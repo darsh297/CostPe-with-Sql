@@ -8,7 +8,7 @@
     <p class="icon-text" style="margin-left: 10px;">Create WorkReport</p>
   <% end %>
 <% end %>
- <% unless current_user.role.role_name == "Project Leader" || current_user.role.role_name == "Employee" %>
+ <% unless  current_user.role.role_name == "Employee" %>
         <%= link_to allworkreports_path, class: "float-end btn-icon-container" do %>
           <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
           <p class="icon-text" style="margin-left: 10px;">Other WorkReport</p>

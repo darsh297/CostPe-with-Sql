@@ -2,12 +2,13 @@
   <div style="text-align: left; margin-top: 60px;">
     <h1 style="flex-grow: 1;">Holidays</h1>
     <div class="icon-link">
-      <% unless current_user.role.role_name == "Employee" %>
-    <%= link_to  new_holiday_path, class: "float-end" do %>
-      <%= image_tag("action/add.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 30px;") %>
-      <p class="icon-text">Add Holiday</p>
-      <% end %>
-      <% end %>
+    <% unless ["Employee", "Project Manager", "Project Leader"].include?(current_user.role.role_name) %>
+  <%= link_to new_holiday_path, class: "float-end" do %>
+    <%= image_tag("action/add.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 30px;") %>
+    <p class="icon-text">Add Holiday</p>
+  <% end %>
+<% end %>
+
     </div>
   </div>
   <% if @holidays.any? %>

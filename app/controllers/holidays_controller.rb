@@ -1,4 +1,6 @@
 class HolidaysController < ApplicationController
+       load_and_authorize_resource
+
   def index
     if current_user.role.role_name == "Root"
       @holidays = Holiday.all
@@ -32,21 +34,30 @@ class HolidaysController < ApplicationController
     @holiday.created_by = current_user.id if current_user.role.role_name == "Root"
     end
   end
-
-  def create
-    if current_user.role.role_name == "Employee"
-
+def create
+  if %w(Employee Project\ Manager Project\ Leader).include?(current_user.role.role_name)
     redirect_to root_path, alert: "Access denied"
-    else
+  else
     @holiday = Holiday.new(holiday_params)
     @holiday.created_by = current_user.id
+
+    # Set company_id based on user role
+    if current_user.role.role_name == "Root"
+      # Allow Root user to define company_id
+      @holiday.company_id = params[:holiday][:company_id]
+    else
+      # For other roles, set company_id to current user's company_id
+      @holiday.company_id = current_user.company_id
+    end
+
     if @holiday.save
       redirect_to holidays_path
     else
       render 'new'
     end
   end
-  end
+end
+
 
   private
 

@@ -5,4 +5,5 @@ class WorkreportMailer < ApplicationMailer
     @cc_emails = params[:cc_emails]
     mail(to: @to_emails, cc: @cc_emails, subject: "New Work Report Created")
   end
+  
 end

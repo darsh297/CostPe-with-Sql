@@ -47,18 +47,6 @@
       <% end %>
       <br/>
 
-   <%= link_to clients_path do %>
-        <%= image_tag("action/target.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
-        Client
-      <% end %>
-      <br/>
-       <%= link_to projects_path do %>
-        <%= image_tag("action/projec.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
-        Project
-      <% end %>
-      <br/>
-
-
   <% if can? :create, User %>
         <%= link_to users_path do %>
           <%= image_tag("login/management.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
@@ -66,6 +54,23 @@
         <% end %>
         <br/>
       <% end %>
+
+  <% if can? :create, Client %>
+   <%= link_to clients_path do %>
+        <%= image_tag("action/target.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Client
+      <% end %>
+      <% end %>
+      <br/>
+      <% if can? :create, Project %>
+       <%= link_to projects_path do %>
+        <%= image_tag("action/projec.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Project
+      <% end %>
+       <% end %>
+      <br/>
+
+
 
  </div>
 

@@ -3,6 +3,9 @@ class CheckIn < ApplicationRecord
 
   validate :one_checkin_and_checkout_per_day, on: :create
 
+  
+
+
   private
 
   def one_checkin_and_checkout_per_day

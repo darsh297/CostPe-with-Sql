@@ -18,7 +18,7 @@
         <select name="filter_month" class="form-control">
           <option value="">Select Month</option>
           <% (1..12).each do |month| %>
-            <option value="<%= month %>" <%= 'selected' if month.to_i == params[:filter_month].to_i %>><%= Date::MONTHNAMES[month] %></option>
+            <option value="<%= month %>" <%= 'selected' if month.to_i == params[:filter_month].to_i %>><%= Date::MONTHNAMES[month].slice(0, 3) %></option>
           <% end %>
         </select>
         <button type="submit" class="btn btn-primary">Filter</button>
@@ -26,26 +26,70 @@
     </div>
   </div>
 
-  <div class="row">
-    <% @attendance_data.group_by { |attendance| attendance[:date].strftime("%W") }.each_slice(2) do |weeks| %>
-      <% weeks.each do |week, attendances| %>
-        <div class="col-md-6">
-          <div class="card" style="margin-bottom: 20px;">
-            <div class="card-body">
-              <h5 class="card-title">Week <%= week.to_i + 1 %></h5>
-              <ul class="list-group">
-                <% attendances.each do |attendance| %>
-                  <li class="list-group-item">
-                    <span style="color: <%= color_for_status(attendance[:status]) %>;">&#11044;</span>
-                    <%= attendance[:date] %>
-                  </li>
-                <% end %>
-              </ul>
+  <!-- Calendar view -->
+  <div class="calendar">
+    <% filter_month = (1..12).include?(params[:filter_month].to_i) ? params[:filter_month].to_i : Date.today.month %>
+    <% first_day = Date.new(Date.today.year, filter_month, 1) %>
+    <% last_day = Date.new(Date.today.year, filter_month, -1) %>
+    <% (first_day..last_day).each_slice(7) do |week| %>
+      <div class="week">
+        <% week.each do |day| %>
+          <div class="day">
+            <h3 style="font-size: 14px;"><%= day.strftime("%a") %></h3>
+            <p><%= day.strftime("%d") %></p>
+            <div class="attendances"> <!-- Container for status dots -->
+              <% attendances = @attendance_data.select { |attendance| attendance[:date] == day } %>
+              <% attendances.each do |attendance| %>
+                <div class="attendance" style="background-color: <%= color_for_status(attendance[:status]) %>;">&nbsp;</div>
+              <% end %>
             </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     <% end %>
   </div>
 </div>
 <%= render 'layouts/sidebar' %>
+
+<style>
+.content {
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+h1 {
+  color: #333;
+}
+
+.legend-list li {
+  list-style: none;
+  margin-right: 20px;
+}
+
+.attendance {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 2px;
+}
+
+.day {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.week {
+  display: flex;
+  gap: 5px;
+}
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+</style>

@@ -59,6 +59,23 @@ def checkout
   end
 end
 
+def self.users_without_checkout
+  # Get the current day
+  current_date = Date.today
+
+  # Set the time threshold for check-out (7 PM)
+  checkout_threshold = current_date.to_time + 19.hours
+
+  # Find users who have not checked out by the threshold time
+  users_without_checkout = User.joins(:check_ins)
+                               .where('check_ins.check_out_time IS NULL OR check_ins.check_out_time < ?', checkout_threshold)
+                               .distinct
+                               .pluck(:email)
+
+  users_without_checkout
+end
+
+
   private
 
   def set_check_in
