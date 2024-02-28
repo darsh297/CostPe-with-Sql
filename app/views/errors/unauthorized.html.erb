@@ -26,10 +26,9 @@
 </head>
 <body>
   <div class="error-image">
-   <%= image_tag "Error.gif", alt: "Error Image" , style: "width: 40%; height: 40%;" %>
+    <%= image_tag "Error.gif", alt: "Error Image" , style: "width: 40%; height: 40%;" %>
     <h1>Unauthorized</h1>
-      <%= link_to 'Back', 'javascript:history.back()' %>
-
+    <%= link_to "Back to Home", root_path, class: "back-button" %>
   </div>
 </body>
 </html>

@@ -24,6 +24,6 @@ every :day, at: '10:00am' do
   rake "workreports:send_reminders"
 end
 
-every 1.minute do
+every :day, at: '19:00pm'  do
   rake "checkouts:checkout_reminders"
 end

@@ -4,21 +4,23 @@
       <div class="field">
         <h1 style="color: #365486;">New Work Report</h1>
       </div>
- <% if @to_emails.present? %>
-  <div class="border-box">
-    To:
-    <%= @to_emails.join(', ') %>
-  </div>
-<% end %>
 
-<br>
+      <% if @to_emails.present? %>
+        <div class="border-box">
+          To:
+          <%= @to_emails.join(', ') %>
+        </div>
+      <% end %>
 
-<% if @cc_emails.present? %>
-  <div class="border-box">
-    Cc:
-    <%= @cc_emails.join(', ') %>
-  </div>
-<% end %>
+      <br>
+
+      <% if @cc_emails.present? %>
+        <div class="border-box">
+          Cc:
+          <%= @cc_emails.join(', ') %>
+        </div>
+      <% end %>
+
       <% unless params[:user_id].present? %>
         <div class="field">
           <%= f.label :report_date, "Report Date:", class: "form-label" %><br />
@@ -33,7 +35,7 @@
           <%= f.date_field :date, class: "form-control", required: true, min: Date.yesterday, max: Date.today, onchange: "checkDate(this)" %>
         <% end %>
       <% end %>
- 
+
       <% unless params[:user_id].present? %>
         <div class="field">
           <%= f.label :user_id, "User", class: "form-label" %><br />
@@ -48,7 +50,7 @@
       <% else %>
         <%= f.hidden_field :user_id, value: params[:user_id] %>
       <% end %>
- 
+
       <% if current_user.role.role_name == "Root" %>
         <div class="field">
           <%= f.label :projects_id, "Project:", class: "form-label" %><br />
@@ -60,12 +62,12 @@
           <%= f.collection_select :projects_id, Project.joins(:client).where(clients: { company_id: current_user.company_id }), :id, lambda { |project| "#{project.client&.client_name || 'No Client'} - #{project.name}" }, { prompt: "Select a Project" }, { class: "form-control select-with-arrow", required: true } %>
         </div>
       <% end %>
- 
+
       <div class="field">
         <%= f.label :tasks, "Tasks:", class: "form-label" %><br />
         <%= f.text_area :tasks, placeholder: "Task", class: "form-control" %>
       </div>
- 
+
       <div class="field">
         <div class="row">
           <div class="col">
@@ -78,21 +80,24 @@
           </div>
         </div>
       </div>
- 
+
       <div class="field">
         <%= f.label :status, "Status:", class: "form-label" %><br />
         <%= f.select :status, options_for_select(['inprogress', 'complete'], selected: "complete"), { prompt: "Select Status" }, { class: "form-control", required: true } %>
       </div>
-      <br>
-     <div class="field d-flex justify-content-between">
-  <%= f.submit "Add More", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;", id: "addMoreBtn" %>
-  <%= f.submit "Create Work Report", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
+
+      <div class="form-fields-wrapper">
+        <%= f.hidden_field :index, value: 0, class: "index-field" %>
+        <!-- Remaining form fields will be added dynamically -->
+      </div>
+
+      <%= button_tag "Add More", class: "btn btn-primary", id: "addMoreBtn" %>
+      <%= f.submit "Create Work Report", class: "btn btn-primary" %>
+    <% end %>
+  </div>
 </div>
 
 
-    <% end %>
- </div> 
-   </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -100,95 +105,35 @@ document.addEventListener("DOMContentLoaded", function() {
   addMoreBtn.addEventListener("click", function(event) {
     event.preventDefault();
     const form = document.querySelector('.report-form');
-    const newForm = form.cloneNode(true);
-    
-    // Remove the heading from the new form if it exists
-    const heading = newForm.querySelector('h1');
-    if (heading) {
-      heading.remove();
-    }
-    
-    // Remove date field from the new form if it exists
-    const dateField = newForm.querySelector('[name="workreport[date]"]');
-    if (dateField) {
-      const dateFieldContainer = dateField.closest('.field');
-      if (dateFieldContainer) {
-        dateFieldContainer.remove();
-      } else {
-        dateField.remove(); // Remove the date field directly if its container is not found
-      }
-      
-      // Remove the associated label for the date field
-      const dateLabel = newForm.querySelector('label[for="' + dateField.id + '"]');
-      if (dateLabel) {
-        dateLabel.remove();
-      }
+    const formFieldsWrapper = form.querySelector('.form-fields-wrapper');
+    const currentIndex = parseInt(form.querySelector('.index-field').value);
+    const newIndex = currentIndex + 1;
+
+    const newFormFieldsWrapper = formFieldsWrapper.cloneNode(true);
+
+    // Update the index value
+    const newIndexField = newFormFieldsWrapper.querySelector('.index-field');
+    if (newIndexField) {
+      newIndexField.value = newIndex;
     }
 
-    // Remove select user field from the new form if it exists
-    const userField = newForm.querySelector('[name="workreport[user_id]"]');
-    if (userField) {
-      const userFieldContainer = userField.closest('.field');
-      if (userFieldContainer) {
-        userFieldContainer.remove();
-      } else {
-        userField.remove(); // Remove the user field directly if its container is not found
+    // Reset field values for the new form fields
+    const fieldsToReset = newFormFieldsWrapper.querySelectorAll('input, select, textarea');
+    fieldsToReset.forEach(field => {
+      if (field.type !== 'submit') {
+        field.value = ''; // Reset field value
+        field.removeAttribute('id'); // Remove ID attribute to prevent duplicate IDs
       }
-      
-      // Remove the associated label for the user field
-      const userLabel = newForm.querySelector('label[for="' + userField.id + '"]');
-      if (userLabel) {
-        userLabel.remove();
-      }
-    }
-    
-    // Set the same date in the cloned form
-    const originalDateField = form.querySelector('[name="workreport[date]"]');
-    if (originalDateField) {
-      const newDateField = newForm.querySelector('[name="workreport[date]"]');
-      if (newDateField) {
-        newDateField.value = originalDateField.value;
-      }
-    }
-    
-    // Set the same user ID in the cloned form
-    const originalUserIdField = form.querySelector('[name="workreport[user_id]"]');
-    if (originalUserIdField) {
-      const newUserIdField = newForm.querySelector('[name="workreport[user_id]"]');
-      if (newUserIdField) {
-        newUserIdField.value = originalUserIdField.value;
-      }
-    }
-    
-    // Remove "Add More" and "Create Work Report" buttons from the new form
-    const addMoreButton = newForm.querySelector('#addMoreBtn');
-    if (addMoreButton) {
-      addMoreButton.remove();
-    }
-    const createReportButton = newForm.querySelector('[type="submit"]');
-    if (createReportButton) {
-      createReportButton.remove();
-    }
-    
-    // Create and add a cancel button to the new form
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = 'Cancel';
-    cancelButton.classList.add('btn', 'btn-secondary');
-    cancelButton.style.backgroundColor = '#707070'; // Set the background color of the button
-    cancelButton.style.border = 'none'; // Remove border
-    cancelButton.onclick = function() {
-      newForm.remove();
-    };
-    newForm.appendChild(cancelButton);
-    
-    // Ensure the action attribute is retained
-    newForm.action = form.action;
-    form.parentNode.insertBefore(newForm, form.nextSibling);
+    });
+
+    // Append the cloned form fields inside the form-fields-wrapper div
+    formFieldsWrapper.appendChild(newFormFieldsWrapper);
   });
 });
+
+
 </script>
 
 <%= render 'shared/error' %>
 <%= render 'shared/back_button' %>
 <%= render 'layouts/sidebar' %>
-

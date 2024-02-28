@@ -1,80 +1,75 @@
 class WorkreportsController < ApplicationController
   before_action :authenticate_user!
   load_and_authorize_resource
- def index
-  @workreports = current_user.workreports.order(date: :desc)
-  @users = User.all
-end
 
-
-def allworkreports
-  if current_user.role.role_name == "Employee"
-     redirect_to unauthorized_path, alert: "Access denied"
-  elsif current_user.role.role_name == "Root"
-    @workreports = Workreport.order(date: :desc).all
-  elsif current_user.role.role_name == "Company Admin"
-    user_ids_in_same_company = User.where(company_id: current_user.company_id).pluck(:id)
-    @workreports = Workreport.where(user_id: user_ids_in_same_company).order(date: :desc)
-  elsif  current_user.role.role_name == "Project Leader"
-     current_user_id = current_user.id
-    email_hierarchies = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user_id}%", "%#{current_user_id}%")
-    user_workreport_ids = email_hierarchies.pluck(:user_id).uniq
-    @workreports = Workreport.where(user_id: user_workreport_ids).order(date: :desc)
-  else
-    current_user_id = current_user.id
-    email_hierarchies = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user_id}%", "%#{current_user_id}%")
-    user_workreport_ids = email_hierarchies.pluck(:user_id).uniq
-    @workreports = Workreport.where(user_id: user_workreport_ids).order(date: :desc)
+  def index
+    @workreports = current_user.workreports.order(date: :desc)
+    @users = User.all
   end
-end
 
+  def allworkreports
+    if current_user.role.role_name == "Employee"
+      redirect_to unauthorized_path, alert: "Access denied"
+    elsif current_user.role.role_name == "Root"
+      @workreports = Workreport.order(date: :desc).all
+    elsif current_user.role.role_name == "Company Admin"
+      user_ids_in_same_company = User.where(company_id: current_user.company_id).pluck(:id)
+      @workreports = Workreport.where(user_id: user_ids_in_same_company).order(date: :desc)
+    elsif current_user.role.role_name == "Project Leader"
+      current_user_id = current_user.id
+      email_hierarchies = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user_id}%", "%#{current_user_id}%")
+      user_workreport_ids = email_hierarchies.pluck(:user_id).uniq
+      @workreports = Workreport.where(user_id: user_workreport_ids).order(date: :desc)
+    else
+      current_user_id = current_user.id
+      email_hierarchies = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user_id}%", "%#{current_user_id}%")
+      user_workreport_ids = email_hierarchies.pluck(:user_id).uniq
+      @workreports = Workreport.where(user_id: user_workreport_ids).order(date: :desc)
+    end
+  end
 
-def show
-   @workreports = Workreport.find(params[:id])
-end
+  def show
+    @workreports = Workreport.find(params[:id])
+  end
 
   def other
-     @workreport = Workreport.new
-     @users = User.all
-
-
-  end
-
-
-  def new
-    # binding.pry
     @workreport = Workreport.new
     @users = User.all
-
- if params[:user_id].present?
-   @workreport.user_id = params[:user_id]
-   @workreport.date = Date.current
- elsif current_user.role.role_name == "Employee"
-          redirect_to workreports_path ,alert: "Access Denied"
- else
-   set_default_date
- end
-end
-
-def create
-
-  @workreport = Workreport.new(workreport_params)
-  @workreport.created_by = current_user.id
-
-  if @workreport.save
-    if @workreport.user_id == current_user.id
-      send_workreport_notification(@workreport, "workreports_path")
-    else
-      send_workreport_notification(@workreport, "allworkreports_path")
-    end
-  else
-    render 'new'
   end
-end
 
+  def new
+    @workreport = Workreport.new
+    @users = User.all
+if current_user.role.role_name == "Employee"
+    redirect_to workreports_path, alert: "Access Denied"
+end
+    if params[:user_id].present?
+      @workreport.user_id = params[:user_id]
+      @workreport.date = Date.current
+    elsif current_user.role.role_name == "Employee"
+      redirect_to workreports_path, alert: "Access Denied"
+    else
+      set_default_date
+    end
+  end
+
+  def create
+    @workreport = Workreport.new(workreport_params)
+    @workreport.created_by = current_user.id
+
+    if @workreport.save
+      if @workreport.user_id == current_user.id
+        send_workreport_notification(@workreport, "workreports_path")
+      else
+        send_workreport_notification(@workreport, "allworkreports_path")
+      end
+    else
+      render 'new'
+    end
+  end
 
   def edit
-   if current_user.role.role_name == "Employee"
+    if current_user.role.role_name == "Employee"
       if Time.now.hour >= 12 || @workreport.date < Date.today - 1
         redirect_to @workreport, alert: "You cannot edit this work report after 12 PM or after the next day."
       end
@@ -93,22 +88,31 @@ end
     end
   end
 
- def self.users_with_pending_reports
-  # Find yesterday's date
-  yesterday = Date.yesterday
-  # binding.pry
-  # Find users who haven't submitted work reports for yesterday
-  users_with_reports = Workreport.where(date: yesterday.beginning_of_day..yesterday.end_of_day).pluck(:user_id)
+  def self.users_with_pending_reports
+  def new
+    @workreport = Workreport.new
+    @users = User.all
 
-  users_without_reports = User.left_outer_joins(:workreports)
-                               .where.not(id: users_with_reports)
-                               .distinct
-                               .pluck(:email)
+    if params[:user_id].present?
+      @workreport.user_id = params[:user_id]
+      @workreport.date = Date.current
+    elsif current_user.role.role_name == "Employee"
+      redirect_to workreports_path, alert: "Access Denied"
+    else
+      set_default_date
+    end
+  end
 
-  users_without_reports
-end
+    yesterday = Date.yesterday
+    users_with_reports = Workreport.where(date: yesterday.beginning_of_day..yesterday.end_of_day).pluck(:user_id)
 
+    users_without_reports = User.left_outer_joins(:workreports)
+                                 .where.not(id: users_with_reports)
+                                 .distinct
+                                 .pluck(:email)
 
+    users_without_reports
+  end
 
   private
 
@@ -121,10 +125,9 @@ end
   end
 
   def can_edit_workreport?
-    cutoff_time = Time.new(Date.today.year, Date.today.month, Date.today.day + 1, 12, 0, 0, "+00:00") # 12 PM of the next day
+    cutoff_time = Time.new(Date.today.year, Date.today.month, Date.today.day + 1, 12, 0, 0, "+00:00")
     Time.now < cutoff_time && @workreport.date >= Date.today
   end
-
 
   def send_workreport_notification(workreport, redirect_path)
     email_hierarchy = EmailHierarchy.where(user_id: workreport.user_id)
@@ -135,6 +138,4 @@ end
     WorkreportMailer.with(workreport: workreport, to_emails: to_emails, cc_emails: cc_emails).created.deliver_now
     redirect_to send(redirect_path)
   end
-
-
 end

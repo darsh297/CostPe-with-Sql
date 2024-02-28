@@ -62,6 +62,7 @@ end
 def self.users_without_checkout
   # Get the current day
   current_date = Date.today
+  # binding.pry
 
   # Set the time threshold for check-out (7 PM)
   checkout_threshold = current_date.to_time + 19.hours
@@ -82,3 +83,4 @@ end
     @check_in = current_user.check_ins.find(params[:id])
   end
 end
+

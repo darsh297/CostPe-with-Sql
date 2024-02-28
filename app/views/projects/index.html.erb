@@ -54,14 +54,8 @@
     </table>
   <% end %>
 </div>
- <div class="icon-link">
-
-<div style="position: absolute; top: 10px; right: 30px;">
-  <%= link_to users_path(user_id: current_user.id), class: "btn-icon-container" do %>
-    <%= image_tag("back.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
-    <p class="icon-text" style="margin-left: 10px;">Back</p>
-  <% end %>
 </div>
 </div>
+<%= render 'shared/back_button' %>
  <%= render 'shared/error' %>
 <%= render 'layouts/sidebar' %>

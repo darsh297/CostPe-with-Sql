@@ -1,14 +1,14 @@
 <div class="content">
   <div style="margin-top: 60px; display: flex;">
     <h1 style="flex-grow: 1;">Work Report</h1>
-  <div class="icon-link">
-<% unless current_user.workreports.exists?(date: Date.today) %>
-  <%= link_to new_workreport_path(user_id: current_user.id), class: "float-end btn-icon-container" do %>
-    <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
-    <p class="icon-text" style="margin-left: 10px;">Create WorkReport</p>
-  <% end %>
-<% end %>
- <% unless  current_user.role.role_name == "Employee" %>
+    <div class="icon-link">
+      <% unless current_user.workreports.exists?(date: Date.today) %>
+        <%= link_to new_workreport_path(user_id: current_user.id), class: "float-end btn-icon-container" do %>
+          <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
+          <p class="icon-text" style="margin-left: 10px;">Create WorkReport</p>
+        <% end %>
+      <% end %>
+      <% unless current_user.role.role_name == "Employee" %>
         <%= link_to allworkreports_path, class: "float-end btn-icon-container" do %>
           <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
           <p class="icon-text" style="margin-left: 10px;">Other WorkReport</p>
@@ -16,10 +16,15 @@
       <% end %>
     </div>
   </div>
-  <table class="table table-bordered table-striped">
+  <div style="margin-top: 20px;">
+    <%= select_tag 'project_filter', options_for_select(Project.all.map{ |p| [p.name, p.id] }.unshift(['All Projects', nil])), class: 'form-control' %>
+    <input type="date" id="date_filter" class="form-control">
+  </div>
+  <table class="table table-bordered table-striped" id="workreport-table">
     <thead class="thead-dark">
       <tr>
         <th>Date</th>
+        <th>Project</th>
         <th>Tasks</th>
         <th>Status</th>
         <th>Action</th>
@@ -27,8 +32,9 @@
     </thead>
     <tbody>
       <% @workreports.each do |workreport| %>
-        <tr>
+        <tr data-project-id="<%= workreport.projects_id %>">
           <td><%= workreport.date %></td>
+          <td><%= Project.find(workreport.projects_id).name %></td>
           <td><%= workreport.tasks %></td>
           <td><%= workreport.status == 'inprogress' ? 'Incomplete' : 'Complete' %></td>
           <td>
@@ -37,12 +43,11 @@
               <span class="tooltip-text">Show</span>
             <% end %>
             <% if Time.now.hour < 12 && workreport.date >= Date.today - 1 %>
-  <%= link_to edit_workreport_path(workreport), class: 'btn-delete' do %>
-    <%= image_tag('action/pencil.png', height: 40) %>
-    <span class="tooltip-text">Edit</span>
-  <% end %>
-<% end %>
-
+              <%= link_to edit_workreport_path(workreport), class: 'btn-delete' do %>
+                <%= image_tag('action/pencil.png', height: 40) %>
+                <span class="tooltip-text">Edit</span>
+              <% end %>
+            <% end %>
           </td>
         </tr>
       <% end %>
@@ -52,3 +57,33 @@
 <%= render 'shared/error' %>
 <%= render 'shared/back_button' %>
 <%= render 'layouts/sidebar' %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const projectFilter = document.getElementById('project_filter');
+    const dateFilter = document.getElementById('date_filter');
+    const tableRows = document.querySelectorAll('#workreport-table tbody tr');
+
+    projectFilter.addEventListener('change', filterTable);
+    dateFilter.addEventListener('change', filterTable);
+
+    function filterTable() {
+      const selectedProjectId = projectFilter.value;
+      const selectedDate = dateFilter.value;
+      
+      tableRows.forEach(function(row) {
+        const projectId = row.getAttribute('data-project-id');
+        const rowDate = row.querySelector('td:first-child').textContent;
+
+        const projectMatch = selectedProjectId === '' || projectId === selectedProjectId;
+        const dateMatch = selectedDate === '' || rowDate === selectedDate;
+
+        if (projectMatch && dateMatch) {
+          row.style.display = 'table-row';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>

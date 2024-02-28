@@ -11,26 +11,50 @@
     </div>
   </div>
 
-  <!-- Filter by month -->
+  <!-- Filter by month and year -->
   <div class="row" style="margin-top: 20px;">
-    <div class="col-md-6">
-      <form action="" method="GET">
-        <select name="filter_month" class="form-control">
-          <option value="">Select Month</option>
-          <% (1..12).each do |month| %>
-            <option value="<%= month %>" <%= 'selected' if month.to_i == params[:filter_month].to_i %>><%= Date::MONTHNAMES[month].slice(0, 3) %></option>
-          <% end %>
-        </select>
+    <div class="col-md-6 d-flex align-items-end">
+      <form action="" method="GET" class="w-100 d-flex justify-content-between align-items-end">
+        <div class="d-flex flex-grow-1 mr-2">
+          <div class="form-group mr-2">
+            <select name="filter_month" class="form-control">
+              <option value="">Select Month</option>
+              <% (1..12).each do |month| %>
+                <option value="<%= month %>" <%= 'selected' if month.to_i == params[:filter_month].to_i %>><%= Date::MONTHNAMES[month].slice(0, 3) %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="form-group mr-2">
+            <!-- Add dropdown for selecting year -->
+            <select name="filter_year" class="form-control">
+              <option value="">Select Year</option>
+              <% (Date.today.year - 3..Date.today.year).each do |year| %>
+                <option value="<%= year %>" <%= 'selected' if year.to_i == params[:filter_year].to_i %>><%= year %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
         <button type="submit" class="btn btn-primary">Filter</button>
       </form>
     </div>
   </div>
 
+  <!-- Header for selected month -->
+  <div class="selected-month">
+    <% if params[:filter_month].present? && params[:filter_year].present? %>
+      <h2><%= Date::MONTHNAMES[params[:filter_month].to_i] %> <%= params[:filter_year] %></h2>
+    <% else %>
+      <h2><%= Date::MONTHNAMES[Date.today.month] %> <%= Date.today.year %></h2>
+    <% end %>
+  </div>
+
   <!-- Calendar view -->
   <div class="calendar">
     <% filter_month = (1..12).include?(params[:filter_month].to_i) ? params[:filter_month].to_i : Date.today.month %>
-    <% first_day = Date.new(Date.today.year, filter_month, 1) %>
-    <% last_day = Date.new(Date.today.year, filter_month, -1) %>
+    <% filter_year = params[:filter_year].to_i.zero? ? Date.today.year : params[:filter_year].to_i %>
+    <% first_day = Date.new(filter_year, filter_month, 1) %>
+    <% first_day = first_day - (first_day.cwday - 1) % 7 %> <!-- Ensure first day is Monday -->
+    <% last_day = Date.new(filter_year, filter_month, -1) %>
     <% (first_day..last_day).each_slice(7) do |week| %>
       <div class="week">
         <% week.each do |day| %>
@@ -59,6 +83,10 @@
 
 h1 {
   color: #333;
+}
+
+h2 {
+  margin-top: 20px; /* Added margin-top to separate from the filter section */
 }
 
 .legend-list li {
