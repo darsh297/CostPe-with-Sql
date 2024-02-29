@@ -6,7 +6,7 @@
       <div class="field">
         <h1 style="color: #365486;">Add User</h1>
         <%= f.label :email, class: "form-label" %><span class="required">*</span><br />
-        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control"    %> <br />
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control"     %> <br />
         
         
           <% if @user.errors[:email].any? %>
@@ -14,16 +14,6 @@
             <b><%= "Email" + @user.errors[:email].join(", ") %></b>
           </div>
         <% end %>
-
-
-
-
-
-
-
-
-
-
        
       </div>
  
@@ -40,22 +30,28 @@
  
       <div class="field">
         <div class="form-group">
-          <div class="half-width">
-            <%= f.label :role_id, class: "form-label" %><span class="required">*</span><br />
-            <%= f.collection_select :role_id, Role.where.not(id: [1]), :id, :role_name, { prompt: "Select a role" }, class: "form-control", required: true, id: "role-select" %>
-            <% if @user.errors[:role_id].any? %>
-              <div class="error-message"><%= @user.errors[:role_id].first %></div>
-            <% end %>
-          </div>
-          <div class="half-width" class>
-            <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
-            <%= f.collection_select :company_id, Company.all, :id, :company_name, { prompt: "Select a company" }, class: "form-control", required: true %>
-            <% if @user.errors[:company_id].any? %>
-              <div class="error-message"><%= @user.errors[:company_id].first %></div>
-            <% end %>
-          </div>
-        </div>
-      </div>
+         <div class="half-width">
+  <%= f.label :role_id, class: "form-label" %><span class="required">*</span><br />
+  <% if current_user.role.role_name != "Company Admin" %>
+    <%= f.collection_select :role_id, Role.where.not(role_name: "Root"), :id, :role_name, { prompt: "Select a role" }, class: "form-control", required: true, id: "role-select" %>
+  <% else %>
+<%= f.collection_select :role_id, Role.where.not(role_name: ["Company Admin", "Root"]), :id, :role_name, { prompt: "Select a role" }, class: "form-control", required: true, id: "role-select" %>  <% end %>
+  <% if @user.errors[:role_id].any? %>
+    <div class="error-message"><%= @user.errors[:role_id].first %></div>
+  <% end %>
+</div>
+</div>
+       <% if current_user.role.role_name != "Company Admin" %>
+  <div class="half-width">
+    <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
+    <%= f.collection_select :company_id, Company.all, :id, :company_name, { prompt: "Select a company" }, class: "form-control", required: true %>
+    <% if @user.errors[:company_id].any? %>
+      <div class="error-message"><%= @user.errors[:company_id].first %></div>
+    <% end %>
+ 
+<% end %>
+</div>
+</div>
  
       <div class="field" id="designation-department-fields">
         <div class="form-group">

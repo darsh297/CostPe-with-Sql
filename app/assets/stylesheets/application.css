@@ -12,6 +12,7 @@
  *
  *= require_tree .
  *= require_self
+
  */
  @import 'fade_out_flash_messages';
 
@@ -443,4 +444,8 @@ body, h1, h2, h3, h4, h5, h6, p, .sidebar, .content, .profile-details, .btn, .fo
   border: 1px solid #ccc; /* Add a border */
   padding: 10px; /* Add padding for spacing */
   border-radius: 5px; /* Add border radius for rounded corners */
+}
+
+.report-date-field {
+  display: none;
 }

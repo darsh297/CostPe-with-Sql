@@ -21,20 +21,24 @@
     <%= form_for(@email_hierarchy, url: email_hierarchys_path, data: { turbo: false }) do |f| %>
       <div class="field">
         <h1 style="color: #365486;">New Hierarchy</h1> <br /> <br />
-        <%= f.label :user_id, class: "form-label" %> <br />
-        <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, class: "form-control", required: true %><br /><br />
+     <%= f.label :user_id, class: "form-label" %> <br />
+<%= f.collection_select :user_id, @users_without_email, :id, :email, { prompt: "Select a User" }, class: "form-control", required: true %><br /><br />
 
-        <%= f.label :to, "To", class: "form-label" %> <br />
-        <select name="email_hierarchy[to_ids][]" id="to_ids" class="form-control" multiple="multiple">
-          <% @users.each do |user| %>
-            <option value="<%= user.id %>"><%= user.email %></option>
-          <% end %>
-        </select>
-        <br /> <br />
+  <%= f.label :to, "To", class: "form-label" %> <br />
+<select name="email_hierarchy[to_ids][]" id="to_ids" class="form-control" multiple="multiple">
+  <option value="">Select user for To</option> <!-- Prompt -->
+  <% @users.each do |user| %>
+    <option value="<%= user.id %>"><%= user.email %></option>
+  <% end %>
+</select>
+<br /> <br />
+
 
         <%= f.label :cc, "Cc", class: "form-label" %> <br />
         <select name="email_hierarchy[cc_ids][]" id="cc_ids" class="form-control" multiple="multiple">
+          <option value="">Select user for Cc</option>
           <% @users.each do |user| %>
+
             <option value="<%= user.id %>"><%= user.email %></option>
           <% end %>
         </select>

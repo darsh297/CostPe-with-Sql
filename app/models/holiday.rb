@@ -1,6 +1,6 @@
 class Holiday < ApplicationRecord
   validates :holiday_date, presence: true
-  validate :date_cannot_be_in_the_past
+  # validate :date_cannot_be_in_the_past , presence: true
   belongs_to :company
 
   private

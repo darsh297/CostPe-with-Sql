@@ -1,6 +1,5 @@
 class EmailHierarchy < ApplicationRecord
   belongs_to :user
-
   validate :unique_user
 
   private

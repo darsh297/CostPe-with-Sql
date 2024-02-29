@@ -19,8 +19,8 @@ class UsersController < ApplicationController
 
       def new
         @user = User.new
-      end
 
+    end
       def add_user
       end
 
@@ -33,7 +33,10 @@ class UsersController < ApplicationController
           @user.designation_id = nil
           @user.department_id = nil
         end
-
+          if current_user.role.role_name == "Company Admin"
+          # binding.pry
+         @user.company_id = current_user.company_id
+      end
         if @user.save
           flash[:notice] = "#{@user.email} created successfully."
 
@@ -93,3 +96,4 @@ end
        params.require(:user).permit(:avatar, :f_name, :l_name, :accountnumber, :ifsc, :mobileNumber, :joiningDate).permit!
       end
     end
+

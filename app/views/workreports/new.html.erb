@@ -1,4 +1,5 @@
 <div class="content">
+  
   <div style="text-align: left;">
     <%= form_for(@workreport, html: { class: "report-form" }) do |f| %>
       <div class="field">
@@ -36,20 +37,26 @@
         <% end %>
       <% end %>
 
-      <% unless params[:user_id].present? %>
-        <div class="field">
-          <%= f.label :user_id, "User", class: "form-label" %><br />
-          <% if current_user.role.role_name == "Root" %>
-            <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
-          <% else %>
-            <% corresponding_user_ids = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user.id}%", "%#{current_user.id}%").pluck(:user_id) %>
-            <% users_for_other_reports = @users.where(id: corresponding_user_ids, company_id: current_user.company_id) %>
-            <%= f.collection_select :user_id, users_for_other_reports, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
-          <% end %>
-        </div>
+    <% unless params[:user_id].present? %>
+  <div class="field">
+    <%= f.label :user_id, "User", class: "form-label" %><br />
+    <% if current_user.role.role_name == "Root" || current_user.role.role_name == "Company Admin" %>
+      <% if current_user.role.role_name == "Company Admin" %>
+        <% users_for_company_admin = @users.where(company_id: current_user.company_id) %>
+        <%= f.collection_select :user_id, users_for_company_admin, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
       <% else %>
-        <%= f.hidden_field :user_id, value: params[:user_id] %>
+        <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
       <% end %>
+    <% else %>
+      <% corresponding_user_ids = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user.id}%", "%#{current_user.id}%").pluck(:user_id) %>
+      <% users_for_other_reports = @users.where(id: corresponding_user_ids, company_id: current_user.company_id) %>
+      <%= f.collection_select :user_id, users_for_other_reports, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+    <% end %>
+  </div>
+<% else %>
+  <%= f.hidden_field :user_id, value: params[:user_id] %>
+<% end %>
+
 
       <% if current_user.role.role_name == "Root" %>
         <div class="field">
@@ -64,9 +71,10 @@
       <% end %>
 
       <div class="field">
-        <%= f.label :tasks, "Tasks:", class: "form-label" %><br />
-        <%= f.text_area :tasks, placeholder: "Task", class: "form-control" %>
+         <%= f.label :tasks, "Tasks:", class: "form-label" %><br />
+         <%= f.text_area :tasks, placeholder: "Task", class: "form-control", required: true %>
       </div>
+
 
       <div class="field">
         <div class="row">
@@ -88,10 +96,9 @@
 
       <div class="form-fields-wrapper">
         <%= f.hidden_field :index, value: 0, class: "index-field" %>
-        <!-- Remaining form fields will be added dynamically -->
       </div>
 
-      <%= button_tag "Add More", class: "btn btn-primary", id: "addMoreBtn" %>
+      <%# <%= button_tag "Add More", class: "btn btn-primary", id: "addMoreBtn" %> 
       <%= f.submit "Create Work Report", class: "btn btn-primary" %>
     <% end %>
   </div>

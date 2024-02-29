@@ -18,7 +18,16 @@ class EmailHierarchysController < ApplicationController
   end
 
 def new
+  if ["Project Leader", "Project Manager", "Employee"].include?(current_user.role.role_name)
+    redirect_to workreports_path, alert: "Access Denied"
+    return
+  end
+
+  @users_without_email = User.where(company_id: current_user.company_id)
+                             .where.not(id: EmailHierarchy.pluck(:user_id))
+
   @users = User.where(company_id: current_user.company_id)
+
   @email_hierarchy = EmailHierarchy.new
 end
 
@@ -31,7 +40,6 @@ end
     to_ids = email_hierarchy_params[:to_ids].reject(&:empty?).join(',')
     cc_ids = email_hierarchy_params[:cc_ids].reject(&:empty?).join(',')
 
-    # Update the params with the comma-separated strings
     updated_params = email_hierarchy_params.merge(to_ids: to_ids, cc_ids: cc_ids)
     if @email_hierarchy.update(updated_params)
       redirect_to @email_hierarchy, notice: 'Email Hierarchy was successfully updated.'
@@ -42,18 +50,14 @@ end
 
 
   def create
-    # Fetch only users belonging to the same company as the current user
     company_users = User.where(company_id: current_user.company_id)
 
-    # Extract user IDs from the fetched users
     company_user_ids = company_users.pluck(:id)
 
-    # Filter the `to_ids` and `cc_ids` submitted in the form to ensure they belong to the same company
     permitted_params = email_hierarchy_params
     permitted_params[:to_ids] = permitted_params[:to_ids].reject(&:empty?).select { |id| company_user_ids.include?(id.to_i) }.join(',')
     permitted_params[:cc_ids] = permitted_params[:cc_ids].reject(&:empty?).select { |id| company_user_ids.include?(id.to_i) }.join(',')
 
-    # Create the email hierarchy with the filtered parameters
     email_hierarchy = EmailHierarchy.new(permitted_params)
 
     if email_hierarchy.save

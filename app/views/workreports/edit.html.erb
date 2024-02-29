@@ -5,18 +5,13 @@
         <h1 style="color: #365486;">Edit Work Report</h1>
       </div>
 
-      <% unless params[:user_id].present? %>
-        <div class="field">
-          <%= f.label :report_date, "Report Date", class: "form-label" %><br />
-          <%= f.date_field :date, class: "form-control", required: true, max: Date.today %>
-        </div>
-      <% else %>
-        <% if Time.now.hour > 12 %>
-          <%= f.date_field :date, value: Date.today, class: "form-control", required: true, readonly: true, max: Date.today %>
-        <% else %>
-          <%= f.date_field :date, class: "form-control", required: true, min: Date.yesterday, max: Date.today, onchange: "checkDate(this)" %>
-        <% end %>
-      <% end %>
+   <% unless params[:user_id].present? %>
+  <div class="field report-date-field">
+    <%= f.label :report_date, "Report Date", class: "form-label" %><br />
+    <%= f.date_field :date, class: "form-control", required: true, max: Date.today %>
+  </div>
+<% end %>
+
 
      
 

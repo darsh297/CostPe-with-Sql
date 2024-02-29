@@ -1,9 +1,8 @@
 class CheckIn < ApplicationRecord
   belongs_to :user
-
   validate :one_checkin_and_checkout_per_day, on: :create
 
-  
+
 
 
   private

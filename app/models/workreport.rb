@@ -3,13 +3,18 @@ class Workreport < ApplicationRecord
   belongs_to :user
 
   validates :user_id, presence: true, unless: :user_with_role_six?
-  # validate :one_report_per_user, on: :create
+  # validate :one_report_per_user, on: :create , presence: true
   validates :date, presence: true
 
 
   def active_users
     where(isactive: true)
   end
+
+  def soft_delete
+    update_attribute(:is_active, false)
+  end
+
 
   private
 

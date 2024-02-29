@@ -9,11 +9,11 @@ namespace :api do
     delete '/logout', to: 'users#destroy'
   end
 end
-namespace :api do
-  namespace :v1 do
-    resources :check_ins, only: [:create]
-  end
-end
+# namespace :api do
+#   namespace :v1 do
+#     resources :check_ins, only: [:create]
+#   end
+# end
 
   devise_for :users, skip: [:registrations]
   resources :profiles
@@ -40,6 +40,11 @@ end
     end
   end
    resources :clients do
+    member do
+      delete :soft_delete
+    end
+  end
+   resources :workreports do
     member do
       delete :soft_delete
     end

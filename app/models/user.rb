@@ -10,17 +10,14 @@ class User < ApplicationRecord
   has_one :email_hierarchy
   has_many :workreports
   has_many :clients
-  has_one_attached :image
   has_one_attached :avatar
   has_many :check_ins
 
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, format: { with: /\A(?=.*[a-zA-Z])(?=.*[0-9]).{8,}\z/, alert: "must contain at least one letter, one digit, and be at least 8 characters long" }, on: :create
-  
-  validate :password_no_spaces
+  # validates  :password_no_spaces , presence: true
   validates :mobileNumber, presence: true, format: { with: /\A\d{10}\z/, alert: "must be a 10-digit number" } , on: :update
   validates :ifsc, presence: true, format: { with: /\A[A-Z]{4}0\d{5}\z/, message: "must be in the format ABCD0 followed by 5 digits" }, on: :update
-
   validates :designation, presence: true, unless: -> { role.role_name == "Company Admin" }
   validates :department, presence: true, unless: -> { role.role_name == "Company Admin" }
 

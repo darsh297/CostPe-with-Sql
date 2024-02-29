@@ -1,6 +1,7 @@
 <div class="content">
   <div style="text-align: left; margin-top: 60px;">
     <h1 style="display: inline-block;">Attendance Report</h1>
+   
     <div class="legend" style="float: right;">
       <ul class="legend-list">
         <li style="display: inline-block; margin-right: 20px;"><span style="color: green;">&#11044;</span> Present</li>
@@ -10,36 +11,30 @@
       </ul>
     </div>
   </div>
-
-  <!-- Filter by month and year -->
   <div class="row" style="margin-top: 20px;">
-    <div class="col-md-6 d-flex align-items-end">
-      <form action="" method="GET" class="w-100 d-flex justify-content-between align-items-end">
-        <div class="d-flex flex-grow-1 mr-2">
-          <div class="form-group mr-2">
-            <select name="filter_month" class="form-control">
-              <option value="">Select Month</option>
-              <% (1..12).each do |month| %>
-                <option value="<%= month %>" <%= 'selected' if month.to_i == params[:filter_month].to_i %>><%= Date::MONTHNAMES[month].slice(0, 3) %></option>
-              <% end %>
-            </select>
-          </div>
-          <div class="form-group mr-2">
-            <!-- Add dropdown for selecting year -->
-            <select name="filter_year" class="form-control">
-              <option value="">Select Year</option>
-              <% (Date.today.year - 3..Date.today.year).each do |year| %>
-                <option value="<%= year %>" <%= 'selected' if year.to_i == params[:filter_year].to_i %>><%= year %></option>
-              <% end %>
-            </select>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Filter</button>
-      </form>
-    </div>
+  <div class="col-md-4 d-flex justify-content-between align-items-end">
+    <form action="" method="GET" class="w-100 d-flex justify-content-between align-items-end">
+      <div class="form-group mr-2">
+        <select name="filter_month" class="form-control">
+          <option value="">Select Month</option>
+          <% (1..12).each do |month| %>
+            <option value="<%= month %>" <%= 'selected' if month.to_i == params[:filter_month].to_i %>><%= Date::MONTHNAMES[month].slice(0, 3) %></option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group mr-2">
+        <select name="filter_year" class="form-control">
+          <option value="">Select Year</option>
+          <% (Date.today.year - 3..Date.today.year).each do |year| %>
+            <option value="<%= year %>" <%= 'selected' if year.to_i == params[:filter_year].to_i %>><%= year %></option>
+          <% end %>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
   </div>
+</div>
 
-  <!-- Header for selected month -->
   <div class="selected-month">
     <% if params[:filter_month].present? && params[:filter_year].present? %>
       <h2><%= Date::MONTHNAMES[params[:filter_month].to_i] %> <%= params[:filter_year] %></h2>
@@ -47,8 +42,6 @@
       <h2><%= Date::MONTHNAMES[Date.today.month] %> <%= Date.today.year %></h2>
     <% end %>
   </div>
-
-  <!-- Calendar view -->
   <div class="calendar">
     <% filter_month = (1..12).include?(params[:filter_month].to_i) ? params[:filter_month].to_i : Date.today.month %>
     <% filter_year = params[:filter_year].to_i.zero? ? Date.today.year : params[:filter_year].to_i %>
@@ -74,9 +67,8 @@
   </div>
 </div>
 <%= render 'layouts/sidebar' %>
-
 <style>
-.content {
+  .content {
   background-color: #f8f9fa;
   padding: 20px;
 }
@@ -120,4 +112,5 @@ h2 {
   flex-direction: column;
   gap: 20px;
 }
+
 </style>

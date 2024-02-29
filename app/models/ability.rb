@@ -31,12 +31,12 @@ class Ability
       can [:read ] , Holiday
       can [:create , :read ,:update] , Workreport
       cannot [:update , :create , :destroy ] , Holiday
-       can :allworkreports, Workreport, user_id: EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{user.id}%", "%#{user.id}%").pluck(:user_id).uniq
+      can :allworkreports, Workreport, user_id: EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{user.id}%", "%#{user.id}%").pluck(:user_id).uniq
       # can :show, User, id: user.id
       # can [:create ,  :read, :update, :destroy], Workreport
       # can :update, User, id: user.id
       # can :manage, :all
-        can [:update ,:read], User, id: user.id
+     can [:update ,:read], User, id: user.id
 
     elsif user.role.role_name == "Employee"
       can :show , Holiday
@@ -45,7 +45,10 @@ class Ability
       can [:read ] , Holiday
       cannot [:update , :create , :destroy ] , Holiday
       can :show, User, id: user.id
-      can [:create ,  :read, :update, :destroy], Workreport , id:user.id
+      can [:create, :edit, :show, :update, :destroy], Workreport, id: user.id
+      can [:read], Workreport
+      can [:edit] , Workreport
+      can [:update] , Workreport
       can [:update], User, id: user.id
 
   end
