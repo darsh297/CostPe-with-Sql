@@ -1,0 +1,97 @@
+<%= form_for(@workreport, html: { class: "report-form" }) do |f| %>
+  <div class="field">
+    <h1 style="color: #365486;">New Work Report</h1>
+  </div>
+
+  <% if @to_emails.present? %>
+    <div class="border-box">
+      To:
+      <%= @to_emails.join(', ') %>
+    </div>
+  <% end %>
+
+  <br>
+
+  <% if @cc_emails.present? %>
+    <div class="border-box">
+      Cc:
+      <%= @cc_emails.join(', ') %>
+    </div>
+  <% end %>
+
+  <% unless params[:user_id].present? %>
+    <div class="field">
+      <%= f.label :report_date, "Report Date:", class: "form-label" %><br />
+      <%= f.date_field :date, class: "form-control", required: true, max: Date.today %>
+    </div>
+  <% else %>
+    <% if Time.now.hour > 12 %>
+      <%= f.label :report_date, "Report Date:", class: "form-label" %><br />
+      <%= f.date_field :date, value: Date.today, class: "form-control", required: true, readonly: true, max: Date.today %>
+    <% else %>
+      <%= f.label :report_date, "Report Date:", class: "form-label" %><br />
+      <%= f.date_field :date, class: "form-control", required: true, min: Date.yesterday, max: Date.today, onchange: "checkDate(this)" %>
+    <% end %>
+  <% end %>
+
+  <% unless params[:user_id].present? %>
+    <div class="field">
+      <%= f.label :user_id, "User", class: "form-label" %><br />
+      <% if current_user.role.role_name == "Root" || current_user.role.role_name == "Company Admin" %>
+        <% if current_user.role.role_name == "Company Admin" %>
+          <% users_for_company_admin = @users.where(company_id: current_user.company_id) %>
+          <%= f.collection_select :user_id, users_for_company_admin, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+        <% else %>
+          <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+        <% end %>
+      <% else %>
+        <% corresponding_user_ids = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user.id}%", "%#{current_user.id}%").pluck(:user_id) %>
+        <% users_for_other_reports = @users.where(id: corresponding_user_ids, company_id: current_user.company_id) %>
+        <%= f.collection_select :user_id, users_for_other_reports, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+      <% end %>
+    </div>
+  <% else %>
+    <%= f.hidden_field :user_id, value: params[:user_id] %>
+  <% end %>
+
+  <% if current_user.role.role_name == "Root" %>
+    <div class="field">
+      <%= f.label :projects_id, "Project:", class: "form-label" %><br />
+      <%= f.collection_select :projects_id, Project.all, :id, lambda { |project| "#{project.client&.client_name || 'No Client'} - #{project.name}" }, { prompt: "Select a Project" }, { class: "form-control select-with-arrow", required: true } %>
+    </div>
+  <% else %>
+    <div class="field">
+      <%= f.label :projects_id, "Project:", class: "form-label" %><br />
+      <%= f.collection_select :projects_id, Project.joins(:client).where(clients: { company_id: current_user.company_id }), :id, lambda { |project| "#{project.client&.client_name || 'No Client'} - #{project.name}" }, { prompt: "Select a Project" }, { class: "form-control select-with-arrow", required: true } %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :tasks, "Tasks:", class: "form-label" %><br />
+    <%= f.text_area :tasks, placeholder: "Task", class: "form-control", required: true %>
+  </div>
+
+  <div class="field">
+    <div class="row">
+      <div class="col">
+        <%= f.label :hour, "Hour:", class: "form-label" %><br />
+        <%= f.select :hours, (0..18).to_a, { selected: 0 }, { class: "form-control", required: true } %>
+      </div>
+      <div class="col">
+        <%= f.label :minute, "Minute:", class: "form-label" %><br />
+        <%= f.select :minutes, options_for_select([0,10, 20, 30, 40, 50], selected: 0), {}, { class: "form-control", required: true } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :status, "Status:", class: "form-label" %><br />
+    <%= f.select :status, options_for_select(['inprogress', 'complete'], selected: "complete"), { prompt: "Select Status" }, { class: "form-control", required: true } %>
+  </div>
+
+  <div class="form-fields-wrapper">
+    <%= f.hidden_field :index, value: 0, class: "index-field" %>
+  </div>
+
+  <%= f.submit "Create Work Report", class: "btn btn-primary" %>
+<% end %>

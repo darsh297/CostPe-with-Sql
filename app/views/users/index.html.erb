@@ -10,7 +10,6 @@
       <div style="margin-top: 20px;"> <!-- Adjust margin-top as needed -->
         <%= form_tag(users_path, method: :get, class: "form-inline", id: "company_filter_form") do %>
           <%= select_tag(:company_id, options_for_select([['All Users', ''], *Company.pluck(:company_name, :id)], params[:company_id]), class: "form-control mr-2", id: "company_select", style: "width: 200px;") %>
-
         <% end %>
       </div>
     <% end %>
@@ -23,16 +22,12 @@
         <% end %>
       </div>
 
-     
-
       <div class="icon-link">
         <%= link_to email_hierarchys_path, class: "float-end" do %>
           <%= image_tag("action/email.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 30px;") %>
           <p class="icon-text">Email Hierarchy</p>
         <% end %>
       </div>
-
-
     </div>
   </div>
 
@@ -79,15 +74,16 @@
 </div>
 
 <%= render 'shared/error' %>
-
 <%= render 'layouts/sidebar' %>
 
 <script>
-  // Automatically submit the form when a company is selected
-  document.addEventListener('DOMContentLoaded', function() {
+  // Turbo-specific event listener for DOM content loaded
+  document.addEventListener('turbo:load', function() {
     const companySelect = document.getElementById('company_select');
-    companySelect.addEventListener('change', function() {
-      document.getElementById('company_filter_form').submit();
-    });
+    if (companySelect) {
+      companySelect.addEventListener('change', function() {
+        document.getElementById('company_filter_form').submit();
+      });
+    }
   });
 </script>
