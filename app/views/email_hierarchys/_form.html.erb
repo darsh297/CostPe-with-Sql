@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <% if @email_hierarchy.persisted? %>
+      Edit Hierarchy
+    <% else %>
+      New Hierarchy
+    <% end %>
+  </title>
+
+  <!-- Select2 CSS -->
+  <%= stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css' %>
+
+  <!-- jQuery (necessary for Select2) -->
+  <%= javascript_include_tag 'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js' %>
+
+  <!-- Select2 JavaScript -->
+  <%= javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js' %>
+</head>
+<body>
+
+<div class="content">
+  <div style="text-align: left; margin-top: 80px;">
+    <%= form_for(@email_hierarchy,
+                 url: email_   hierarchy_path(@email_hierarchy),
+                 data: { turbo: false }) do |f| %>
+      <div class="field">
+        <h1 style="color: #365486;">
+          <% if @email_hierarchy.persisted? %>
+            Edit Hierarchy
+          <% else %>
+            New Hierarchy
+          <% end %>
+        </h1> <br /> <br />
+        <%= f.label :user_id, class: "form-label" %> <br />
+        <%= f.collection_select :user_id, @users_without_email, :id, :email, { prompt: "Select a User" }, class: "form-control", required: true %><br /><br />
+        <%= f.label :to, "To", class: "form-label" %> <br />
+
+        <select name="email_hierarchy[to_ids][]" id="to_ids" class="form-control" multiple="multiple">
+          <option value="">Select user for To</option> <!-- Prompt -->
+          <% @users.each do |user| %>
+            <option value="<%= user.id %>"><%= user.email %></option>
+          <% end %>
+        </select>
+        <br /> <br />
+
+        <%= f.label :cc, "Cc", class: "form-label" %> <br />
+        <select name="email_hierarchy[cc_ids][]" id="cc_ids" class="form-control" multiple="multiple">
+          <option value="">Select user for Cc</option>
+          <% @users.each do |user| %>
+            <option value="<%= user.id %>"><%= user.email %></option>
+          <% end %>
+        </select>
+        <br />
+
+        <div class="field">
+          <%= f.submit "Add", class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<script>
+  document.addEventListener('turbo:load', function() {
+    $('#to_ids, #cc_ids').select2({
+      tags: true,
+      tokenSeparators: [',', ' '],
+      closeOnSelect: false // Keep the dropdown open after selecting an option
+    });
+
+    // Close the dropdown when clicking outside of the Select2 dropdown
+    $(document).on('click', function(e) {
+      if (!$(e.target).closest('.select2-dropdown').length) {
+        $('.select2').select2('close');
+      }
+    });
+  });
+</script>
+</body>
+</html>

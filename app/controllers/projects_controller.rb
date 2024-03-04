@@ -18,10 +18,12 @@ class ProjectsController < ApplicationController
         @project = Project.find(params[:id])
   end
 
-  def new
-    @project = Project.new
+ def new
+  @project = Project.new
+  @clients = Client.where(is_active: true)
+end
 
-  end
+
   def create
     @project = Project.new(project_params)
     @project.user_id = current_user.id

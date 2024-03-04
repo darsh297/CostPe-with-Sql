@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       post '/login', to: 'users#create'
     end
   end
-  
+
 namespace :api do
   namespace :v1 do
     delete '/logout', to: 'users#destroy'

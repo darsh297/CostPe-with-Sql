@@ -1,0 +1,31 @@
+<div class="content">
+  <div style="text-align: left; margin-top: 60px;">
+    <%= form_for(@project, html: { class: "report-form" }, data: { turbo: false }) do |f| %>
+
+      <div class="field"> 
+        <h1 style="color: #365486;">
+          <% if @project.persisted? %>
+            Edit Project
+          <% else %>
+            Add Project
+          <% end %>
+        </h1>
+
+        <%= f.label :client_id, class: "form-label" do %>
+          <%= "Client " %><br />
+        <% end %>
+        <%= f.collection_select :client_id, @clients, :id, :client_name, { prompt: "Select a Client" }, class: "form-control", required: true %>
+
+        <%= f.label :name, "Project name", class: "form-label" %><br />
+        <%= f.text_field :name, class: "form-control", required: true, placeholder: "Project name" %>
+      </div>
+      <br>
+      <div class="field">
+        <%= f.submit @project.persisted? ? "Update" : "Add", class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= render 'shared/error' %>
+<%= render 'layouts/sidebar' %>

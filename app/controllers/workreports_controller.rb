@@ -40,6 +40,14 @@ def new
 
   @workreport = Workreport.new
   @users = User.where(isactive: true)
+  @projects = if current_user.role.role_name == "Root"
+              Project.where(is_active: true)
+            else
+              Project.joins(:client).where(clients: { company_id: current_user.company_id }).where(is_active: true)
+            end
+
+
+
   if params[:user_id].present?
     @workreport.user_id = params[:user_id]
     @workreport.date = Date.current

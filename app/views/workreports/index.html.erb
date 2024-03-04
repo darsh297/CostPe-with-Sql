@@ -26,6 +26,7 @@
         <th>Date</th>
         <th>Project</th>
         <th>Tasks</th>
+        <th>Hour</th>
         <th>Status</th>
         <th>Action</th>
       </tr>
@@ -36,6 +37,8 @@
           <td><%= workreport.date %></td>
           <td><%= Project.find(workreport.projects_id).name %></td>
           <td><%= workreport.tasks %></td>
+          <td><%= "%02d:%02d" % [workreport.hours, workreport.minutes] %></td>
+
           <td><%= workreport.status == 'inprogress' ? 'Incomplete' : 'Complete' %></td>
           <td>
             <%= link_to workreport, class: 'btn-delete' do %>
@@ -59,7 +62,7 @@
 <%= render 'layouts/sidebar' %>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+   document.addEventListener('turbo:load', function() {
     const projectFilter = document.getElementById('project_filter');
     const dateFilter = document.getElementById('date_filter');
     const tableRows = document.querySelectorAll('#workreport-table tbody tr');

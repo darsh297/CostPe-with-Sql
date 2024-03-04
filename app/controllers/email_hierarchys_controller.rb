@@ -1,7 +1,7 @@
 class EmailHierarchysController < ApplicationController
   before_action :authenticate_user!
   load_and_authorize_resource
-  before_action :set_project, only: [:show, :edit, :update, :destroy]
+  before_action :set_email_hierarchy, only: [:show, :edit, :update, :destroy]
 
   def index
     if current_user.role_id == 1
@@ -18,6 +18,7 @@ class EmailHierarchysController < ApplicationController
   end
 
 def new
+    @email_hierarchy = EmailHierarchy.new
   if ["Project Leader", "Project Manager", "Employee"].include?(current_user.role.role_name)
     redirect_to workreports_path, alert: "Access Denied"
     return
@@ -28,25 +29,31 @@ def new
 
   @users = User.where(company_id: current_user.company_id)
 
-  @email_hierarchy = EmailHierarchy.new
+
 end
 
 
   def edit
-
+    @users_without_email = User.where(company_id: current_user.company_id)
+                                .where.not(id: EmailHierarchy.pluck(:user_id))
+    @users = User.where(company_id: current_user.company_id)
   end
 
   def update
     to_ids = email_hierarchy_params[:to_ids].reject(&:empty?).join(',')
     cc_ids = email_hierarchy_params[:cc_ids].reject(&:empty?).join(',')
-
     updated_params = email_hierarchy_params.merge(to_ids: to_ids, cc_ids: cc_ids)
+
     if @email_hierarchy.update(updated_params)
       redirect_to @email_hierarchy, notice: 'Email Hierarchy was successfully updated.'
     else
+      @users_without_email = User.where(company_id: current_user.company_id)
+                                  .where.not(id: EmailHierarchy.pluck(:user_id))
+      @users = User.where(company_id: current_user.company_id)
       render :edit
     end
   end
+
 
 
   def create
@@ -76,9 +83,9 @@ end
 
   private
 
-  def set_project
-    @email_hierarchy = EmailHierarchy.find(params[:id])
-  end
+ def set_email_hierarchy
+  @email_hierarchy = EmailHierarchy.find(params[:id])
+end
   def email_hierarchy_params
     params.require(:email_hierarchy).permit(:user_id, :to_ids, :cc_ids).tap do |whitelisted|
       whitelisted[:to_ids] = params[:email_hierarchy][:to_ids] if params[:email_hierarchy][:to_ids].present?

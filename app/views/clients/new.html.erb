@@ -1,28 +1,3 @@
-<div class="content">
-  <div style="text-align: left; margin-top: 60px;">
-    <%= form_for(@client, html: { class: "report-form" }, url: clients_path, data: { turbo: false }) do |f| %>
-       
-      <div class="field">
-        <h1 style="color: #365486;">New Client</h1>
+<%= render 'form' %>
 
-
-        <%= f.label :name, class: "form-label" %><span class="required">*</span><br />
-        <%= f.text_field :client_name, class: "form-control",placeholder: "Client Name ", required: true %>
-      
-   <% unless current_user.role.role_name == 'Company Admin' %>
-  <%= f.label :company_id, class: "form-label" %><span class="required">*</span><br />
-  <%= f.collection_select :company_id, Company.all, :id, :company_name, { prompt: "Select a company" }, class: "form-control", required: true %><br>
-<% end %>
-
-
-      <div class="field">
-        <%= f.submit "Add", class: "btn btn-primary", style: "width: 100px; background-color: #365486; border-color: #365486;" %>
-      </div>
-    <% end %>
-  </div>
-</div>
-</div>
-<%= render 'shared/back_button' %>
- <%= render 'shared/error' %>
-<%= render 'layouts/sidebar' %>
 
