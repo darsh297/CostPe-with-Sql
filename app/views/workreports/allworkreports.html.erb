@@ -29,6 +29,10 @@
       <div class="form-group" style="margin-right: 20px;">
         <input type="date" id="filterDate" class="form-control">
       </div>
+      <!-- Project Filter -->
+      <div class="form-group" style="margin-right: 20px;">
+        <%= select_tag 'project_filter', options_for_select(Project.all.map{ |p| [p.name, p.id] }.unshift(['All Projects', nil])), class: 'form-control' %>
+      </div>
       <%= link_to new_workreport_path, class: "float-end" do %>
         <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px; margin-left: 10px;") %>
         <p class="icon-text">Add Other WorkReport</p>
@@ -41,6 +45,7 @@
       <tr>
         <th>Name</th>
         <th>Date</th>
+        <th>Project</th>
         <th>Tasks</th>
         <th>Created_by</th>
         <th>Status</th>
@@ -52,22 +57,23 @@
         <tr>
           <td><%= workreport.user.f_name %></td>
           <td><%= workreport.date %></td>
+          <td><%= Project.find(workreport.projects_id).name %></td>
           <td><%= workreport.tasks %></td>
           <td><%= User.find(workreport.created_by).f_name %></td>
           <td><%= workreport.status == 'inprogress' ? 'Incomplete' : 'Complete' %></td>
-                    <td>
+          <td>
             <%= link_to workreport, class: 'btn-delete' do %>
               <%= image_tag('action/show.png', height: 30) %>
               <span class="tooltip-text">Show</span>
             <% end %>
-          <%= link_to edit_workreport_path(workreport), class: 'btn-delete' do %>
-          <%= image_tag('action/pencil.png', height: 40) %>
-         <span class="tooltip-text">Edit</span>
-        <% end %>
-         <%= link_to soft_delete_workreport_path(workreport), method: :delete, data: { turbo_method: :delete, confirm: 'Are you sure? This action cannot be undone.' }, class: 'btn-delete' do %>
-                  <%= image_tag('action/delete.png', height: 30) %>
-                  <span class="tooltip-text">Delete</span>
-                <% end %>
+            <%= link_to edit_workreport_path(workreport), class: 'btn-delete' do %>
+              <%= image_tag('action/pencil.png', height: 40) %>
+              <span class="tooltip-text">Edit</span>
+            <% end %>
+            <%= link_to soft_delete_workreport_path(workreport), method: :delete, data: { turbo_method: :delete, confirm: 'Are you sure? This action cannot be undone.' }, class: 'btn-delete' do %>
+              <%= image_tag('action/delete.png', height: 30) %>
+              <span class="tooltip-text">Delete</span>
+            <% end %>
           </td>
         </tr>
       <% end %>
@@ -84,6 +90,7 @@
     const filterYear = document.getElementById('filterYear');
     const filterMonth = document.getElementById('filterMonth');
     const filterDate = document.getElementById('filterDate');
+    const projectFilter = document.getElementById('project_filter');
     const tableRows = document.querySelectorAll('#workReportTable tbody tr');
 
     // Event listener for search input
@@ -92,7 +99,7 @@
     });
 
     // Event listeners for filters
-    [filterYear, filterMonth, filterDate].forEach(filter => {
+    [filterYear, filterMonth, filterDate, projectFilter].forEach(filter => {
       filter.addEventListener('change', function() {
         filterRows();
       });
@@ -104,15 +111,20 @@
       const yearValue = filterYear.value;
       const monthValue = filterMonth.value;
       const dateValue = filterDate.value;
+      const projectValue = projectFilter.value;
 
       tableRows.forEach(row => {
         const userName = row.querySelector('td:first-child').textContent.toLowerCase();
         const dateText = row.querySelector('td:nth-child(2)').textContent;
+        const projectText = row.querySelector('td:nth-child(3)').textContent;
+
+        const projectId = row.querySelector('td:nth-child(3)').getAttribute('data-project-id');
 
         const showRow = userName.includes(searchValue) &&
           (yearValue === '' || dateText.includes(yearValue)) &&
           (monthValue === '' || dateText.includes(monthValue)) &&
-          (dateValue === '' || dateText.includes(dateValue));
+          (dateValue === '' || dateText.includes(dateValue)) &&
+          (projectValue === '' || projectId === projectValue);
 
         row.style.display = showRow ? '' : 'none';
       });

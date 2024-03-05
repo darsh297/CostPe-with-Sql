@@ -1,5 +1,6 @@
 class Client < ApplicationRecord
   has_many :projects
+  belongs_to :company
 
   after_update :update_projects_status, if: :saved_change_to_is_active?
 

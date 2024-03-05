@@ -3,12 +3,12 @@
     <div class="header-container">
       <h2>CheckIn/CheckOut</h2>
       <% if @check_in %>
-        <div class="button-container" style="display: flex; justify-content: flex-end;">
-          <div class="field">
-            <%= form_with(model: @check_in, url: check_ins_path, method: :post) do |form| %>
-              <%= form.submit "Check In", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
-            <% end %>
-          </div>
+        <div class="button-container" style="display: flex; justify-content: space-between;">
+        <div class="field" style="text-align: right; ml-3">
+        <%= form_with(model: @check_in, url: check_ins_path, method: :post) do |form| %>
+          <%= form.submit "Check In", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
+        <% end %>
+      </div>
           <div class="field">
             <%= form_with(model: @check_in, url: checkout_check_ins_path, method: :post) do |form| %>
               <%= form.submit "Check Out", class: "btn btn-primary", style: "background-color: #365486; border-color: #365486;" %>
@@ -43,3 +43,9 @@
 
 <%= render 'shared/error' %>
 <%= render 'layouts/sidebar' %>
+<style>
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

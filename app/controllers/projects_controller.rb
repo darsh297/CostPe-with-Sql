@@ -20,7 +20,7 @@ class ProjectsController < ApplicationController
 
  def new
   @project = Project.new
-  @clients = Client.where(is_active: true)
+  @clients = Client.where(is_active: true, company_id: current_user.company_id)
 end
 
 

@@ -24,26 +24,26 @@
       <%= f.date_field :date, class: "form-control", required: true, min: Date.yesterday, max: Date.today, onchange: "checkDate(this)" %>
     <% end %>
   <% end %>
-
   <% unless @workreport.persisted? %>
-    <div class="field">
-      <%= f.label :user_id, "User", class: "form-label" %><br />
-      <% if current_user.role.role_name == "Root" || current_user.role.role_name == "Company Admin" %>
-        <% if current_user.role.role_name == "Company Admin" %>
-          <% users_for_company_admin = @users.where(company_id: current_user.company_id) %>
-          <%= f.collection_select :user_id, users_for_company_admin, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
-        <% else %>
-          <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
-        <% end %>
+  <div class="field">
+    <%= f.label :user_id, "User", class: "form-label" %><br />
+    <% if current_user.role.role_name == "Root" || current_user.role.role_name == "Company Admin" %>
+      <% if current_user.role.role_name == "Company Admin" %>
+        <% users_for_company_admin = @users.where(company_id: current_user.company_id) %>
+        <%= f.collection_select :user_id, users_for_company_admin, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
       <% else %>
-        <% corresponding_user_ids = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user.id}%", "%#{current_user.id}%").pluck(:user_id) %>
-        <% users_for_other_reports = @users.where(id: corresponding_user_ids, company_id: current_user.company_id) %>
-        <%= f.collection_select :user_id, users_for_other_reports, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+        <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
       <% end %>
-    </div>
-  <% else %>
-    <%= f.hidden_field :user_id, value: @workreport.user_id %>
-  <% end %>
+    <% else %>
+      <% corresponding_user_ids = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user.id}%", "%#{current_user.id}%").pluck(:user_id) %>
+      <% users_for_other_reports = @users.where(id: corresponding_user_ids, company_id: current_user.company_id) %>
+      <%= f.collection_select :user_id, users_for_other_reports, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
+    <% end %>
+  </div>
+<% else %>
+  <%= f.hidden_field :user_id, value: @workreport.user_id %>
+<% end %>
+
 
     <div class="field">
     <%= f.label :projects_id, "Project:", class: "form-label" %><br />
@@ -57,7 +57,7 @@
   </div>
 
 
-  
+
 
    <% if @workreport.persisted? %>
   <div class="field">

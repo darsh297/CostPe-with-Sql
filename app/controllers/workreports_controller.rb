@@ -82,34 +82,38 @@ end
 
   end
 
- def edit
-  if current_user.role.role_name == "Employee"
-    if @workreport.date != Date.today
-      redirect_to @workreport, alert: "You can only edit today's work report."
-      return
-    elsif Time.now.hour >= 20
-      redirect_to @workreport, alert: "You cannot edit this work report after 12 PM."
-      return
-    end
-  end
-end
-def update
-  if current_user.role.role_name == "Employee"
-    if @workreport.date != Date.today
-      redirect_to @workreport, alert: "You can only update today's work report."
-      return
-    elsif Time.now.hour >= 20
-      redirect_to @workreport, alert: "You cannot update this work report after 12 PM."
-      return
+  def edit
+    @workreport = Workreport.find(params[:id])
+    if current_user.role.role_name == "Employee"
+      if @workreport.date != Date.today
+        redirect_to @workreport, alert: "You can only edit today's work report."
+        return
+      elsif Time.now.hour >= 20
+        redirect_to @workreport, alert: "You cannot edit this work report after 8 PM."
+        return
+      end
     end
   end
 
-  if @workreport.update(workreport_params)
-    redirect_to @workreport, notice: 'Work report was successfully updated.'
-  else
-    render :edit
+  def update
+    @workreport = Workreport.find(params[:id]) # Fetch the work report to update
+
+    if current_user.role.role_name == "Employee"
+      if @workreport.date != Date.today
+        redirect_to @workreport, alert: "You can only update today's work report."
+        return
+      elsif Time.now.hour >= 20
+        redirect_to @workreport, alert: "You cannot update this work report after 8 PM."
+        return
+      end
+    end
+
+    if @workreport.update(workreport_params)
+      redirect_to @workreport, notice: 'Work report was successfully updated.'
+    else
+      render :edit
+    end
   end
-end
 
 
   def self.users_with_pending_reports

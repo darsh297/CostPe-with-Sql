@@ -5,8 +5,10 @@ class ClientsController < ApplicationController
   def index
     if current_user.role.role_name == "Company Admin"
       @clients = Client.where(company_id: current_user.company_id)
+
     else
       @clients = Client.all
+      @companies = Company.all
     end
   end
 

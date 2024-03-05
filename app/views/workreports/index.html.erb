@@ -32,13 +32,14 @@
       </tr>
     </thead>
     <tbody>
-      <% @workreports.each do |workreport| %>
+      <% @workreports.each_with_index do |workreport, index| %>
         <tr data-project-id="<%= workreport.projects_id %>">
-          <td><%= workreport.date %></td>
+          <% if index == 0 || workreport.date != @workreports[index - 1].date %>
+            <td rowspan="<%= @workreports.count { |wr| wr.date == workreport.date } %>"><%= workreport.date %></td>
+          <% end %>
           <td><%= Project.find(workreport.projects_id).name %></td>
           <td><%= workreport.tasks %></td>
           <td><%= "%02d:%02d" % [workreport.hours, workreport.minutes] %></td>
-
           <td><%= workreport.status == 'inprogress' ? 'Incomplete' : 'Complete' %></td>
           <td>
             <%= link_to workreport, class: 'btn-delete' do %>
@@ -73,7 +74,7 @@
     function filterTable() {
       const selectedProjectId = projectFilter.value;
       const selectedDate = dateFilter.value;
-      
+
       tableRows.forEach(function(row) {
         const projectId = row.getAttribute('data-project-id');
         const rowDate = row.querySelector('td:first-child').textContent;

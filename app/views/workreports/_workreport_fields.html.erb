@@ -1,0 +1,57 @@
+<!-- _workreport_fields.html.erb -->
+<%= f.hidden_field :index, value: index, class: "index-field" %>
+
+<!-- Add your other form fields here -->
+<div class="field">
+  <%= f.label :projects_id, "Project:", class: "form-label" %><br />
+  <%= f.collection_select :projects_id, @projects, :id, lambda { |project| "#{project.client&.client_name || 'No Client'} - #{project.name}" }, { prompt: "Select a Project" }, { class: "form-control select-with-arrow", required: true } %>
+</div>
+
+
+<div class="field">
+<%= f.label :projects_id, "Project:", class: "form-label" %><br />
+<%= f.collection_select :projects_id, @projects, :id, lambda { |project| "#{project.client&.client_name || 'No Client'} - #{project.name}" }, { prompt: "Select a Project" }, { class: "form-control select-with-arrow", required: true } %>
+</div>
+
+<div class="field">
+<%= f.label :tasks, "Task:", class: "form-label" %><br />
+<%= f.text_area :tasks, placeholder: "Task", class: "form-control", required: true %>
+</div>
+
+<% if @workreport.persisted? %>
+<div class="field">
+  <div class="row">
+    <div class="col">
+      <%= f.label :hour, "Hour:", class: "form-label" %><br />
+      <%= f.select :hours, (0..18).to_a, { selected: @workreport.hours }, { class: "form-control", required: true } %>
+    </div>
+    <div class="col">
+      <%= f.label :minute, "Minute:", class: "form-label" %><br />
+      <%= f.select :minutes, options_for_select([0,10, 20, 30, 40, 50], selected: @workreport.minutes), {}, { class: "form-control", required: true } %>
+    </div>
+  </div>
+</div>
+
+<div class="field">
+  <%= f.label :status, "Status:", class: "form-label" %><br />
+  <%= f.select :status, options_for_select(['inprogress', 'complete'], selected: @workreport.status), { prompt: "Select Status" }, { class: "form-control", required: true } %>
+</div>
+<% else %>
+<div class="field">
+  <div class="row">
+    <div class="col">
+      <%= f.label :hour, "Hour:", class: "form-label" %><br />
+      <%= f.select :hours, (0..18).to_a, { selected: 0 }, { class: "form-control", required: true } %>
+    </div>
+    <div class="col">
+      <%= f.label :minute, "Minute:", class: "form-label" %><br />
+      <%= f.select :minutes, options_for_select([0,10, 20, 30, 40, 50], selected: 0), {}, { class: "form-control", required: true } %>
+    </div>
+  </div>
+</div>
+
+<div class="field">
+  <%= f.label :status, "Status:", class: "form-label" %><br />
+  <%= f.select :status, options_for_select(['inprogress', 'complete'], selected: "complete"), { prompt: "Select Status" }, { class: "form-control", required: true } %>
+</div>
+<% end %>
