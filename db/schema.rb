@@ -10,10 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
+ActiveRecord::Schema[7.1].define(version: 2024_02_16_032943) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -48,7 +45,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
   end
 
   create_table "check_ins", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.datetime "check_in_time"
     t.datetime "check_out_time"
     t.datetime "created_at", null: false
@@ -61,7 +58,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
     t.boolean "is_active", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
+    t.integer "user_id"
     t.integer "company_id"
     t.index ["user_id"], name: "index_clients_on_user_id"
   end
@@ -85,7 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
   end
 
   create_table "email_hierarchies", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.string "to_ids"
     t.string "cc_ids"
     t.datetime "created_at", null: false
@@ -97,7 +94,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
     t.string "name"
     t.date "holiday_date"
     t.integer "created_by"
-    t.bigint "company_id", null: false
+    t.integer "company_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_holidays_on_company_id"
@@ -112,10 +109,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.boolean "is_active", default: true
     t.integer "company_id"
-    t.bigint "client_id"
+    t.integer "client_id"
     t.index ["client_id"], name: "index_projects_on_client_id"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
@@ -134,10 +131,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "role_id"
-    t.bigint "company_id"
-    t.bigint "department_id"
-    t.bigint "designation_id"
+    t.integer "role_id"
+    t.integer "company_id"
+    t.integer "department_id"
+    t.integer "designation_id"
     t.string "f_name"
     t.string "l_name"
     t.date "dateofBirth"
@@ -161,13 +158,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.integer "project_id", null: false
     t.integer "minutes"
     t.integer "created_by"
-    t.bigint "user_id"
-    t.string "projects_id"
-    t.string "slug"
     t.boolean "is_active", default: true
-    t.index ["slug"], name: "index_workreports_on_slug", unique: true
+    t.index ["project_id"], name: "index_workreports_on_project_id"
     t.index ["user_id"], name: "index_workreports_on_user_id"
   end
 
@@ -183,5 +179,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_22_121223) do
   add_foreign_key "users", "departments"
   add_foreign_key "users", "designations"
   add_foreign_key "users", "roles"
+  add_foreign_key "workreports", "projects"
   add_foreign_key "workreports", "users"
 end
