@@ -2,11 +2,10 @@
   <div style="margin-top: 60px; display: flex;">
     <h1 style="flex-grow: 1;">Work Report</h1>
     <div class="icon-link">
-     
+
         <%= link_to new_workreport_path(user_id: current_user.id), class: "float-end btn-icon-container" do %>
           <%= image_tag("action/add.png", alt: "New Work Report", class: "btn-icon", style: "height: 25px; width: 25px;") %>
           <p class="icon-text" style="margin-left: 10px;">Create WorkReport</p>
-     
       <% end %>
       <% unless current_user.role.role_name == "Employee" %>
         <%= link_to allworkreports_path, class: "float-end btn-icon-container" do %>
@@ -33,11 +32,11 @@
     </thead>
     <tbody>
       <% @workreports.each_with_index do |workreport, index| %>
-        <tr data-project-id="<%= workreport.projects_id %>">
+        <tr data-project-id="<%= workreport.project_id %>">
           <% if index == 0 || workreport.date != @workreports[index - 1].date %>
             <td rowspan="<%= @workreports.count { |wr| wr.date == workreport.date } %>"><%= workreport.date %></td>
           <% end %>
-          <td><%= Project.find(workreport.projects_id).name %></td>
+          <td><%= Project.find(workreport.project_id).name %></td>
           <td><%= workreport.tasks %></td>
           <td><%= "%02d:%02d" % [workreport.hours, workreport.minutes] %></td>
           <td><%= workreport.status == 'inprogress' ? 'Incomplete' : 'Complete' %></td>

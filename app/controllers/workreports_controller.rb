@@ -63,24 +63,29 @@ def new
 end
 end
 
+def create
+  # Check if a work report already exists for the current user and date
+  existing_report = Workreport.find_by(user_id: current_user.id, date: workreport_params[:date])
 
-  def create
-    @workreport = Workreport.new(workreport_params)
-    @workreport.created_by = current_user.id
-
-
-    if @workreport.save
-      if @workreport.user_id == current_user.id
-        send_workreport_notification(@workreport, "workreports_path")
-      else
-        send_workreport_notification(@workreport, "allworkreports_path")
-      end
-    else
-      render 'new'
-    end
-
-
+  if existing_report
+    redirect_to workreports_path, alert: "A work report already exists for this date."
+    return
   end
+
+  @workreport = Workreport.new(workreport_params)
+  @workreport.created_by = current_user.id
+
+  if @workreport.save
+    if @workreport.user_id == current_user.id
+      send_workreport_notification(@workreport, "workreports_path")
+    else
+      send_workreport_notification(@workreport, "allworkreports_path")
+    end
+  else
+    render 'new'
+  end
+end
+
 
   def edit
     @workreport = Workreport.find(params[:id])
@@ -155,7 +160,7 @@ end
   private
 
   def workreport_params
-    params.require(:workreport).permit(:user_id, :created_by, :date, :projects_id, :tasks, :hours, :minutes, :status)
+    params.require(:workreport).permit(:user_id, :created_by, :date, :project_id, :tasks, :hours, :minutes, :status)
   end
 
   def set_default_date

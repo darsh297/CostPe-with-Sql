@@ -69,7 +69,13 @@
       <% end %>
        <% end %>
       <br/>
-
+   <% if can? :create, EmailHierarchy %>
+       <%= link_to email_hierarchys_path do %>
+        <%= image_tag("login/mail.png", alt: "Dashboard", style: "vertical-align: middle; margin-right: 5px; height: 20px; width: 20px;") %>
+        Email Hierarchy
+      <% end %>
+       <% end %>
+      <br/>
 
 
  </div>

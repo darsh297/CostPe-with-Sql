@@ -57,7 +57,7 @@
         <tr>
           <td><%= workreport.user.f_name %></td>
           <td><%= workreport.date %></td>
-          <td><%= Project.find(workreport.projects_id).name %></td>
+          <td><%= Project.find(workreport.project_id).name %></td>
           <td><%= workreport.tasks %></td>
           <td><%= User.find(workreport.created_by).f_name %></td>
           <td><%= workreport.status == 'inprogress' ? 'Incomplete' : 'Complete' %></td>

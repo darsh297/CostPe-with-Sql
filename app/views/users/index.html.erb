@@ -2,7 +2,7 @@
   <div style="text-align: left; margin-top:80px;">
     <h1>All Users</h1>
 
-    <% if current_user.role.role_name == "Root" %> <!-- Only visible to root admin -->
+    <% if current_user.role.role_name == "Root" %>
       <table class="table table-bordered table-striped">
         <!-- Your table content -->
       </table>
@@ -19,13 +19,6 @@
         <%= link_to new_user_path, class: "float-end" do %>
           <%= image_tag("action/user.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 28px;") %>
           <p class="icon-text">New User</p>
-        <% end %>
-      </div>
-
-      <div class="icon-link">
-        <%= link_to email_hierarchys_path, class: "float-end" do %>
-          <%= image_tag("action/email.png", alt: "New user", class: "btn-icon", style: "height: 30px; width: 30px;") %>
-          <p class="icon-text">Email Hierarchy</p>
         <% end %>
       </div>
     </div>
@@ -61,7 +54,7 @@
                   <span class="tooltip-text">Delete</span>
                 <% end %>
               <% else %>
-                <div style="width: 10px; height: 10px;"></div> <!-- Adjust width and height as needed -->
+                <div style="width: 10px; height: 10px;"></div> 
               <% end %>
             </td>
           </tr>
@@ -77,7 +70,7 @@
 <%= render 'layouts/sidebar' %>
 
 <script>
-  // Turbo-specific event listener for DOM content loaded
+ 
   document.addEventListener('turbo:load', function() {
     const companySelect = document.getElementById('company_select');
     if (companySelect) {
