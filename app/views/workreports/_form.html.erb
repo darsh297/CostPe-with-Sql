@@ -1,3 +1,6 @@
+<div class="content">
+  <div style="text-align: left;">
+
 <%= form_for(@workreport, html: { class: "report-form" }) do |f| %>
   <div class="field">
     <h1 style="color: #365486;">New Work Report</h1>
@@ -25,23 +28,14 @@
     <% end %>
   <% end %>
   <% unless @workreport.persisted? %>
+<% unless params[:user_id].present? %>
   <div class="field">
     <%= f.label :user_id, "User", class: "form-label" %><br />
-    <% if current_user.role.role_name == "Root" || current_user.role.role_name == "Company Admin" %>
-      <% if current_user.role.role_name == "Company Admin" %>
-        <% users_for_company_admin = @users.where(company_id: current_user.company_id) %>
-        <%= f.collection_select :user_id, users_for_company_admin, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
-      <% else %>
-        <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
-      <% end %>
-    <% else %>
-      <% corresponding_user_ids = EmailHierarchy.where("to_ids LIKE ? OR cc_ids LIKE ?", "%#{current_user.id}%", "%#{current_user.id}%").pluck(:user_id) %>
-      <% users_for_other_reports = @users.where(id: corresponding_user_ids, company_id: current_user.company_id) %>
-      <%= f.collection_select :user_id, users_for_other_reports, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
-    <% end %>
+    <%= f.collection_select :user_id, @users, :id, :email, { prompt: "Select a User" }, { class: "form-control custom-select", required: true } %>
   </div>
 <% else %>
-  <%= f.hidden_field :user_id, value: @workreport.user_id %>
+  <%= f.hidden_field :user_id, value: params[:user_id] %>
+<% end %>
 <% end %>
 
 
@@ -102,5 +96,13 @@
     <%= f.hidden_field :index, value: 0, class: "index-field" %>
   </div>
 
+
+   <% if @workreport.persisted? %>
+     <%= f.submit "Update Work Report", class: "btn btn-primary" %>
+     <% else %>
+
   <%= f.submit "Create Work Report", class: "btn btn-primary" %>
+  <%end %>
 <% end %>
+</div>
+</div>

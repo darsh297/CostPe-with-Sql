@@ -84,6 +84,7 @@ end
 
   def edit
     @workreport = Workreport.find(params[:id])
+    @projects = Project.all
     if current_user.role.role_name == "Employee"
       if @workreport.date != Date.today
         redirect_to @workreport, alert: "You can only edit today's work report."
@@ -95,25 +96,28 @@ end
     end
   end
 
-  def update
-    @workreport = Workreport.find(params[:id]) # Fetch the work report to update
+def update
+  @workreport = Workreport.find(params[:id]) # Fetch the work report to update
 
-    if current_user.role.role_name == "Employee"
-      if @workreport.date != Date.today
-        redirect_to @workreport, alert: "You can only update today's work report."
-        return
-      elsif Time.now.hour >= 20
-        redirect_to @workreport, alert: "You cannot update this work report after 8 PM."
-        return
-      end
-    end
-
-    if @workreport.update(workreport_params)
-      redirect_to @workreport, notice: 'Work report was successfully updated.'
-    else
-      render :edit
+  if current_user.role.role_name == "Employee"
+    if @workreport.date != Date.today
+      redirect_to @workreport, alert: "You can only update today's work report."
+      return
+    elsif Time.now.hour >= 20
+      redirect_to @workreport, alert: "You cannot update this work report after 8 PM."
+      return
+    elsif params[:workreport][:date] && Date.parse(params[:workreport][:date]) < Date.yesterday
+      redirect_to @workreport, alert: "You cannot edit a work report for a date older than yesterday."
+      return
     end
   end
+
+  if @workreport.update(workreport_params)
+    redirect_to @workreport, notice: 'Work report was successfully updated.'
+  else
+    render :edit
+  end
+end
 
 
   def self.users_with_pending_reports
